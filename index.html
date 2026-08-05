@@ -8,10 +8,13 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="titan">
 <title>titan</title>
+<meta name="titan-version" content="2026.08.04.2323">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 /* ============ titan design system — pattrn-minimal, near-black, one accent ============ */
 :root{
@@ -369,7 +372,7 @@ code{background:var(--card2);border:1px solid var(--line);padding:2px 7px;border
 .gridlegend{display:flex;gap:12px;align-items:center;margin-top:10px;font-size:10.5px;color:var(--dim)}
 .gridlegend i{width:11px;height:11px;border-radius:3.5px;display:inline-block;margin-right:4px;vertical-align:-1px}
 /* pacing bar */
-.pace{margin:26px 0 6px}
+.pace{margin:10px 0 6px}
 .pacebar{position:relative;height:12px;background:rgba(255,255,255,.06);border-radius:99px;overflow:visible}
 .pacebar .fillp{height:100%;border-radius:99px;transition:width .6s}
 .pacebar .mark{position:absolute;top:-4px;width:2px;height:20px;background:var(--text);border-radius:2px;opacity:.85}
@@ -595,379 +598,93 @@ button.primary:active:not(:disabled){box-shadow:0 2px 8px -6px rgba(167,139,250,
   .statgrid{grid-template-columns:repeat(auto-fit,minmax(84px,1fr))}
 }
 
-/* ==================================================================
-   v4 ADDITIONS — boot splash, mobile overhaul, motion system
-   ================================================================== */
-
-/* ---------- motion tokens ---------- */
-:root{
-  --ease-out:cubic-bezier(.16,1,.3,1);
-  --ease-spring:cubic-bezier(.34,1.56,.64,1);
-  --dur-fast:.18s; --dur:.32s; --dur-slow:.55s;
-}
-@media (prefers-reduced-motion: reduce){
-  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
-}
-
-/* ---------- BOOT SPLASH ---------- */
-#bootSplash{
-  position:fixed;inset:0;z-index:9999;background:var(--bg);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;
-  transition:opacity .5s var(--ease-out),visibility .5s;
-}
-#bootSplash.gone{opacity:0;visibility:hidden;pointer-events:none}
-#bootSplash .ringwrap{position:relative;width:96px;height:96px;display:grid;place-items:center}
-#bootSplash .ring{position:absolute;inset:0;border-radius:99px;border:2px solid transparent;
-  border-top-color:var(--acc);border-right-color:var(--acc);
-  animation:bootspin 1.05s linear infinite}
-#bootSplash .ring2{position:absolute;inset:12px;border-radius:99px;border:1.5px solid rgba(167,139,250,.22);
-  animation:bootspin 1.9s linear infinite reverse}
-#bootSplash .ring3{position:absolute;inset:0;border-radius:99px;background:radial-gradient(circle,var(--acc-soft),transparent 68%);
-  animation:bootglow 2.2s ease-in-out infinite}
-@keyframes bootspin{to{transform:rotate(360deg)}}
-@keyframes bootglow{0%,100%{opacity:.35;transform:scale(.9)}50%{opacity:.85;transform:scale(1.08)}}
-#bootSplash .mark{font-size:34px;font-weight:900;letter-spacing:-.05em;color:var(--text);
-  animation:bootmark .8s var(--ease-out) both}
-#bootSplash .mark::after{content:'.';color:var(--acc)}
-@keyframes bootmark{from{opacity:0;transform:translateY(14px) scale(.94)}to{opacity:1;transform:none}}
-#bootSplash .glyph{font-size:34px;filter:drop-shadow(0 0 14px rgba(167,139,250,.5));animation:bootpop .7s var(--ease-spring) both}
-@keyframes bootpop{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:none}}
-#bootSplash .bar{width:170px;height:3px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
-#bootSplash .bar div{height:100%;width:0;background:linear-gradient(90deg,var(--acc),#c4b5fd);
-  border-radius:99px;transition:width .35s var(--ease-out)}
-#bootSplash .msg{font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);
-  min-height:15px;transition:opacity .25s}
-#bootSplash .tag{position:absolute;bottom:calc(30px + env(safe-area-inset-bottom));font-size:10px;color:var(--dim);letter-spacing:.12em;text-transform:uppercase;opacity:.55}
-body.booting{overflow:hidden}
-
-/* ---------- staggered card entrance ---------- */
-.tabview.on .card{animation:cardin .5s var(--ease-out) both}
-.tabview.on .card:nth-child(1){animation-delay:.02s}
-.tabview.on .card:nth-child(2){animation-delay:.07s}
-.tabview.on .card:nth-child(3){animation-delay:.12s}
-.tabview.on .card:nth-child(4){animation-delay:.17s}
-.tabview.on .card:nth-child(5){animation-delay:.21s}
-.tabview.on .card:nth-child(n+6){animation-delay:.25s}
-@keyframes cardin{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:none}}
-
-/* ---------- tab view transition ---------- */
-.tabview.on{animation:viewin .38s var(--ease-out) both}
-@keyframes viewin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-
-/* ---------- button press + ripple ---------- */
-button:active:not(:disabled){transform:scale(.965)}
-button{position:relative;overflow:hidden}
-.rippl{position:absolute;border-radius:50%;background:rgba(255,255,255,.28);
-  transform:scale(0);animation:rip .55s var(--ease-out);pointer-events:none}
-@keyframes rip{to{transform:scale(2.6);opacity:0}}
-
-/* ---------- skeleton shimmer ---------- */
-.skel{background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.10) 37%,rgba(255,255,255,.04) 63%);
-  background-size:400px 100%;animation:shimmer 1.35s linear infinite;border-radius:8px;height:13px;margin:7px 0}
-
-/* ---------- count-up number ---------- */
-.bignum,.statgrid b{transition:color .25s}
-.numpop{animation:numpop .4s var(--ease-spring)}
-@keyframes numpop{0%{transform:scale(1)}45%{transform:scale(1.13)}100%{transform:scale(1)}}
-
-/* ---------- chip / badge motion ---------- */
-.chip{transition:background .2s,color .2s,transform var(--dur-fast) var(--ease-spring),border-color .2s}
-.chip:active{transform:scale(.93)}
-.badge{transition:transform .2s var(--ease-spring),border-color .25s,background .25s}
-
-/* ================= MOBILE OVERHAUL ================= */
-@media (max-width:760px){
-  body{font-size:14.5px;overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch}
-  main{padding:12px 12px 26px}
-  .card{padding:15px;border-radius:17px;margin-bottom:11px}
-  .card h2,.label{font-size:10.5px;letter-spacing:.11em;margin-bottom:11px}
-  .bignum{font-size:34px}
-
-  /* header compacts */
-  header{padding:calc(11px + env(safe-area-inset-top)) 15px 10px;gap:9px}
-  header .wordmark{font-size:19px}
-  .lvlpill{padding:5px 10px 5px 6px}
-  .lvlpill .xpb{width:40px}
-  .evtpill{font-size:10px;padding:6px 10px}
-
-  /* bottom nav: 8 items need real room on a 375px screen */
-  #bottomNav{padding:7px 2px calc(7px + env(safe-area-inset-bottom))}
-  #bottomNav button{max-width:none;font-size:8px;letter-spacing:.02em;gap:3px;min-height:44px;padding:1px}
-  #bottomNav button svg{width:20px;height:20px;stroke-width:1.9}
-  #bottomNav button::before{width:34px;height:34px;top:1px}
-  body{padding-bottom:calc(70px + env(safe-area-inset-bottom))}
-
-  /* spar controls: grid instead of a wrapping flex mess */
-  #view-spar .controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:stretch}
-  #view-spar .controls button,#view-spar .controls select{width:100%;min-height:46px;font-size:12.5px;padding:10px 8px}
-  #view-spar .controls .seg{grid-column:1/-1;display:flex;width:100%}
-  #view-spar .controls .seg button{flex:1;min-height:42px}
-  #view-spar #analyzeBtn{grid-column:1/-1;min-height:52px;font-size:15px;font-weight:800}
-  #view-spar .controls button.sm{min-height:42px;font-size:12px}
-  .toggleRow{display:grid;grid-template-columns:1fr 1fr;gap:9px 10px}
-  .toggleRow label{font-size:12px}
-  .toggleRow label:last-child{grid-column:1/-1;margin-left:0!important}
-  .fighters{grid-template-columns:1fr!important;gap:10px}
-  .chartBox{height:200px!important}
-  .coachGrid{grid-template-columns:1fr!important;gap:14px}
-  #view-spar table.rounds{font-size:11.5px}
-
-  /* generic tables scroll instead of squashing */
-  table{display:block;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch}
-
-  /* chips: edge-to-edge scroll with fade */
-  .chips.scroll{margin-left:-12px;margin-right:-12px;padding:0 12px;
-    scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
-  .chips.scroll .chip{scroll-snap-align:start;min-height:38px;display:flex;align-items:center}
-
-  /* every tappable thing hits 44px */
-  button,.btnlike,select,input[type=text],input[type=number],input[type=date]{min-height:44px}
-  input,select,textarea{font-size:16px}   /* stops iOS zoom-on-focus */
-  .seg button{min-height:44px}
+/* ============ COACH ============ */
+.coachhero{background:linear-gradient(160deg,rgba(167,139,250,.10),var(--card) 60%);border-color:var(--acc-line)}
+.coachline{font-size:15.5px;font-weight:600;line-height:1.55;letter-spacing:-.01em}
+.coachprof{margin-top:10px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--acc);cursor:pointer}
+.coachq{min-height:88px;resize:vertical;font-weight:500;line-height:1.55}
+.readrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.readrow:last-child{border-bottom:none}
+.readrow .caret{color:var(--acc);font-weight:900}
+.readt{font-weight:700;font-size:13.5px}
+.ans{animation:cardin .45s cubic-bezier(.22,.9,.25,1) both}
+.anshead{display:flex;justify-content:space-between;align-items:center}
+.anstag{font-size:9px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;padding:3px 8px;border-radius:99px;background:var(--acc-soft);color:var(--acc);border:1px solid var(--acc-line)}
+.anstitle{font-size:19px;font-weight:900;letter-spacing:-.03em;margin:6px 0 8px}
+.ansread{font-size:13.5px;line-height:1.6;color:var(--sub)}
+.tip{display:flex;gap:12px;padding:11px;border:1px solid var(--line);border-radius:var(--r-sm);margin-bottom:8px;background:var(--card2);cursor:pointer;transition:border-color .25s,background .25s}
+.tip:active{transform:scale(.995)}
+.tip .tipn{width:22px;height:22px;border-radius:99px;background:var(--acc-soft);border:1px solid var(--acc-line);color:var(--acc);
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0}
+.tipt{font-size:13.5px;font-weight:700;line-height:1.4}
+.tipd{font-size:12.5px;color:var(--sub);line-height:1.55;max-height:0;overflow:hidden;opacity:0;transition:max-height .35s ease,opacity .3s,margin-top .3s}
+.tip.open{border-color:var(--acc-line)}
+.tip.open .tipd{max-height:240px;opacity:1;margin-top:5px}
+.drill{border:1px solid var(--line);border-radius:var(--r-sm);margin-bottom:9px;background:var(--card2);overflow:hidden;transition:border-color .25s}
+.drill.open{border-color:var(--acc-line)}
+.drill.nogear{opacity:.6}
+.drhead{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px;cursor:pointer;min-height:54px}
+.drname{font-weight:800;font-size:13.5px}
+.drmeta{font-size:10.5px;color:var(--dim);margin-top:2px;letter-spacing:.03em}
+.drill .caret{color:var(--acc);font-weight:900;transition:transform .28s}
+.drill.open .caret{transform:rotate(90deg)}
+.drbody{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.drill.open .drbody{max-height:900px}
+.drinner{display:flex;gap:14px;padding:0 13px 14px;flex-wrap:wrap}
+.dranim{flex-shrink:0}
+.drtext{flex:1;min-width:190px}
+.drhow{font-size:13px;line-height:1.55}
+.drcues{margin:9px 0 0;padding-left:18px}
+.drcues li{font-size:12.5px;color:var(--sub);line-height:1.5;margin:4px 0}
+.drwrong{margin-top:9px;font-size:12.5px;color:var(--bad);line-height:1.5}
+.drwhy{margin-top:8px;font-size:12px;color:var(--dim);line-height:1.5;font-style:italic}
+.planrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.planrow:last-child{border-bottom:none}
+.sodt{font-size:16px;font-weight:800;letter-spacing:-.02em;line-height:1.4}
+#sodCard{cursor:pointer}
+.tact{border-bottom:1px solid var(--line)}
+.tact:last-child{border-bottom:none}
+.tacthead{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 0;cursor:pointer;min-height:52px}
+.tactt{font-weight:700;font-size:14px}
+.tact .caret{color:var(--acc);font-weight:900;transition:transform .28s}
+.tact.open .caret{transform:rotate(90deg)}
+.tactbody{max-height:0;overflow:hidden;transition:max-height .45s ease}
+.tact.open .tactbody{max-height:1200px}
+.tactinner{padding-bottom:14px}
+.tactinner p{font-size:13px;line-height:1.65;color:var(--sub);margin-bottom:10px}
+.dbrow{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+.dbrow:last-child{border-bottom:none}
+.feltdot{font-weight:900;font-size:14px}
+.feltdot.good{color:var(--good)} .feltdot.bad{color:var(--bad)} .feltdot.ok{color:var(--dim)}
+.oppnote{margin-top:10px;font-size:12.5px;color:var(--sub);background:var(--card2);border-left:3px solid var(--warn);padding:9px 11px;border-radius:8px}
+/* reaction trainer */
+.rxstage{border-radius:var(--r);min-height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  background:var(--card2);border:1px solid var(--line);transition:background .12s,border-color .12s;user-select:none;text-align:center;padding:16px}
+.rxstage.rxwait{background:var(--card2)}
+.rxstage.rxgo{background:rgba(74,222,128,.16);border-color:var(--good)}
+.rxstage.rxhit{background:rgba(167,139,250,.16);border-color:var(--acc)}
+.rxstage.rxwrong,.rxstage.rxearly{background:rgba(248,113,113,.14);border-color:var(--bad)}
+.rxstage.rxmiss{background:rgba(251,191,36,.13);border-color:var(--warn)}
+.rxbig{font-size:30px;font-weight:900;letter-spacing:-.03em;line-height:1.1}
+.rxsub{font-size:11.5px;color:var(--dim);font-weight:600}
+.rxsides{display:flex;gap:10px;margin-top:12px}
+.rxside{flex:1;min-height:74px;font-size:15px;font-weight:900;letter-spacing:.04em;border-radius:var(--r-sm)}
+.rxbtns{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+.rxbtn{min-height:56px;font-size:12.5px;font-weight:700;border-radius:var(--r-sm)}
+@media(max-width:700px){
+  .rxbig{font-size:26px}
+  .drinner{gap:10px}
+  #bottomNav button{max-width:74px}
+  #bottomNav button svg{width:20px;height:20px}
 }
 
-@media (max-width:400px){
-  #bottomNav button{font-size:7.5px}
-  #bottomNav button svg{width:19px;height:19px}
-  header .wordmark{font-size:17.5px}
-  .evtpill{font-size:9.5px;padding:5px 8px}
-  #view-spar .controls{grid-template-columns:1fr}
-  .bignum{font-size:31px}
-}
-
-/* landscape phone: reclaim vertical space */
-@media (max-height:480px) and (orientation:landscape){
-  header{padding-top:calc(7px + env(safe-area-inset-top));padding-bottom:7px}
-  #bottomNav{padding:4px 2px calc(4px + env(safe-area-inset-bottom))}
-  #bottomNav button{min-height:38px;font-size:7.5px}
-  #bottomNav button svg{width:17px;height:17px}
-  body{padding-bottom:calc(58px + env(safe-area-inset-bottom))}
-}
-
-/* ---------- AI coach panel ---------- */
-.aibox{border:1px solid var(--acc-line);border-radius:var(--r-sm);padding:14px;background:linear-gradient(160deg,var(--acc-soft),transparent 70%)}
-.aibox .row{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
-.aibox select,.aibox input{background:var(--card2);border:1px solid var(--line2);color:var(--text);
-  border-radius:11px;padding:10px 12px;font-family:inherit;font-size:13px;min-height:44px}
-.aibox input{flex:1;min-width:190px}
-.costpill{font-size:11px;font-weight:800;padding:6px 11px;border-radius:99px;
-  background:rgba(255,255,255,.05);border:1px solid var(--line2);color:var(--sub);white-space:nowrap}
-#aiOut{margin-top:13px;line-height:1.75;font-size:13.5px;white-space:pre-wrap}
-#aiOut h3{font-size:13px;font-weight:800;color:var(--acc);margin:14px 0 6px;letter-spacing:.02em}
-#aiOut .aicard{background:var(--card2);border:1px solid var(--line);border-radius:13px;padding:13px;margin:9px 0;
-  animation:cardin .45s var(--ease-out) both}
-.thinking{display:inline-flex;gap:5px;align-items:center}
-.thinking i{width:6px;height:6px;border-radius:99px;background:var(--acc);animation:tdot 1.15s ease-in-out infinite}
-.thinking i:nth-child(2){animation-delay:.16s}
-.thinking i:nth-child(3){animation-delay:.32s}
-@keyframes tdot{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-4px)}}
-.filmstrip{display:flex;gap:6px;overflow-x:auto;padding:9px 0 3px;-webkit-overflow-scrolling:touch}
-.filmstrip img{height:56px;border-radius:8px;border:1px solid var(--line2);flex-shrink:0;
-  animation:popin .35s var(--ease-out) both}
-
-
-/* ==================================================================
-   v5 — splash redesign, breathing room, Claude spar layout
-   ================================================================== */
-
-/* ---------- SPLASH (rebuilt) ---------- */
-#bootSplash{
-  background:
-    radial-gradient(120% 90% at 50% 8%, rgba(167,139,250,.14), transparent 62%),
-    radial-gradient(90% 70% at 50% 110%, rgba(167,139,250,.07), transparent 60%),
-    var(--bg);
-  gap:0;
-}
-#bootSplash .bsInner{display:flex;flex-direction:column;align-items:center;gap:30px}
-#bootSplash .bsWord{display:flex;align-items:baseline;font-size:clamp(38px,11vw,54px);font-weight:900;
-  letter-spacing:-.055em;color:var(--text);line-height:1}
-#bootSplash .bsWord span,#bootSplash .bsWord em{display:inline-block;opacity:0;animation:bsLetter .62s var(--ease-out) both}
-#bootSplash .bsWord span:nth-child(1){animation-delay:.04s}
-#bootSplash .bsWord span:nth-child(2){animation-delay:.10s}
-#bootSplash .bsWord span:nth-child(3){animation-delay:.16s}
-#bootSplash .bsWord span:nth-child(4){animation-delay:.22s}
-#bootSplash .bsWord span:nth-child(5){animation-delay:.28s}
-#bootSplash .bsWord em{font-style:normal;color:var(--acc);animation-delay:.40s;
-  filter:drop-shadow(0 0 12px rgba(167,139,250,.7))}
-@keyframes bsLetter{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
-
-#bootSplash .bsArc{width:46px;height:46px;opacity:0;animation:bsFade .5s .5s var(--ease-out) forwards}
-#bootSplash .bsArc svg{width:100%;height:100%;transform:rotate(-90deg)}
-#bootSplash .bsArc circle{fill:none;stroke-width:5;r:54;
-  stroke:rgba(255,255,255,.07);cx:60;cy:60}
-#bootSplash .bsArc circle.run{stroke:var(--acc);stroke-linecap:round;
-  stroke-dasharray:339;stroke-dashoffset:339;animation:bsArc 1.5s var(--ease-out) infinite}
-@keyframes bsArc{
-  0%{stroke-dashoffset:339;transform:rotate(0deg);transform-origin:60px 60px}
-  55%{stroke-dashoffset:96}
-  100%{stroke-dashoffset:339;transform:rotate(360deg);transform-origin:60px 60px}
-}
-@keyframes bsFade{to{opacity:1}}
-#bootSplash .bsMsg{font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
-  color:var(--dim);min-height:14px;opacity:0;animation:bsFade .5s .62s var(--ease-out) forwards;transition:opacity .3s}
-#bootSplash .bsFoot{position:absolute;bottom:calc(26px + env(safe-area-inset-bottom));
-  font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;color:var(--dim);opacity:.4}
-
-/* ---------- BREATHING ROOM ---------- */
-main{padding:22px 20px 40px}
-.card{padding:24px;margin-bottom:18px;border-radius:22px}
-.card h2,.label{margin-bottom:18px;font-size:11px;letter-spacing:.15em}
-.card + .card{margin-top:0}
-body{line-height:1.62}
-.muted{line-height:1.7}
-.dim{line-height:1.7}
-.statgrid{gap:16px!important}
-.chips{gap:9px}
-.chip{padding:9px 15px}
-
-@media (max-width:760px){
-  main{padding:16px 15px 30px}
-  .card{padding:18px 16px;margin-bottom:14px;border-radius:19px}
-  .card h2,.label{margin-bottom:14px}
-}
-
-/* ---------- SPAR: Claude layout ---------- */
-.sparhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
-.sparbar{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:14px 0 0}
-.sparbar select{flex:1;min-width:120px}
-.sparbar #playBtn{min-width:56px;font-size:15px}
-.bigcta{width:100%;margin-top:14px;min-height:56px;font-size:15.5px;font-weight:800;letter-spacing:-.01em;
-  border-radius:16px;box-shadow:0 6px 22px -8px rgba(167,139,250,.6)}
-.bigcta:disabled{box-shadow:none}
-.kmeta{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:12px}
-.kmeta select{flex:1;min-width:130px}
-#kStatus{margin-top:14px;font-size:13px;line-height:1.7;min-height:18px}
-
-/* scorecard */
-.kscore{display:flex;align-items:stretch;gap:12px}
-.kscore .side{flex:1;background:var(--card2);border:1px solid var(--line);border-radius:16px;padding:18px 14px;text-align:center;
-  animation:cardin .45s var(--ease-out) both}
-.kscore .side.win{border-color:var(--acc-line);background:linear-gradient(160deg,var(--acc-soft),var(--card2))}
-.kscore .side .who{font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
-.kscore .side .pts{font-size:44px;font-weight:900;letter-spacing:-.05em;line-height:1;font-variant-numeric:tabular-nums}
-.kscore .vs{align-self:center;font-size:11px;font-weight:800;color:var(--dim);letter-spacing:.1em}
-.kwhy{margin-top:14px;font-size:13px;color:var(--sub);line-height:1.75}
-
-/* fighter read */
-.kfighters{display:grid;grid-template-columns:1fr 1fr;gap:13px}
-@media(max-width:760px){.kfighters{grid-template-columns:1fr}}
-.kfc{background:var(--card2);border:1px solid var(--line);border-radius:16px;padding:16px;
-  animation:cardin .45s var(--ease-out) both}
-.kfc.a{border-left:3px solid var(--red)}
-.kfc.b{border-left:3px solid var(--blue)}
-.kfc h4{font-size:13.5px;font-weight:800;margin-bottom:4px;letter-spacing:-.01em}
-.kfc .st{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px}
-.kfc p{font-size:13px;color:var(--sub);line-height:1.75}
-.kbars{margin-top:13px;display:flex;flex-direction:column;gap:9px}
-.kbar{display:flex;align-items:center;gap:10px;font-size:11.5px}
-.kbar span{width:88px;color:var(--dim);font-weight:600;flex-shrink:0}
-.kbar .t{flex:1;height:6px;border-radius:99px;background:rgba(255,255,255,.06);overflow:hidden}
-.kbar .t i{display:block;height:100%;border-radius:99px;background:var(--acc);width:0;
-  transition:width .8s var(--ease-out)}
-.kbar b{width:20px;text-align:right;font-variant-numeric:tabular-nums;color:var(--text)}
-
-/* fixes */
-.kfix{background:var(--card2);border:1px solid var(--line);border-radius:15px;padding:15px;margin-bottom:11px;
-  animation:cardin .45s var(--ease-out) both}
-.kfix .n{display:inline-flex;width:22px;height:22px;border-radius:99px;background:var(--acc-soft);
-  border:1px solid var(--acc-line);color:var(--acc);font-size:11px;font-weight:900;
-  align-items:center;justify-content:center;margin-right:9px}
-.kfix h4{display:flex;align-items:center;font-size:13.5px;font-weight:700;margin-bottom:8px;line-height:1.45}
-.kfix .why{font-size:12.5px;color:var(--sub);line-height:1.7;margin-bottom:9px}
-.kfix .drill{font-size:12.5px;color:var(--text);background:rgba(167,139,250,.09);
-  border-left:2px solid var(--acc-line);padding:9px 12px;border-radius:0 10px 10px 0;line-height:1.65}
-.kkeep{border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.06)}
-.kkeep .n{background:rgba(74,222,128,.15);border-color:rgba(74,222,128,.4);color:var(--good)}
-.ksub{font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);margin:18px 0 11px}
-.ksub:first-child{margin-top:0}
-
-/* moments */
-.kmom{display:flex;gap:12px;align-items:flex-start;padding:12px 13px;border-radius:13px;background:var(--card2);
-  border:1px solid var(--line);margin-bottom:8px;cursor:pointer;transition:border-color .2s,transform .15s}
-.kmom:active{transform:scale(.985)}
-.kmom:hover{border-color:var(--acc-line)}
-.kmom .tm{font-size:11.5px;font-weight:800;color:var(--acc);font-variant-numeric:tabular-nums;
-  background:var(--acc-soft);padding:4px 8px;border-radius:7px;flex-shrink:0}
-.kmom .tx{font-size:12.5px;line-height:1.6;flex:1}
-.kmom .tx b{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:3px}
-.kmom.good{border-left:3px solid var(--good)}
-.kmom.flaw{border-left:3px solid var(--warn)}
-
-/* rounds */
-.krd{padding:13px 0;border-bottom:1px solid var(--line)}
-.krd:last-child{border-bottom:none;padding-bottom:0}
-.krd .rn{font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--acc);margin-bottom:6px}
-.krd p{font-size:13px;color:var(--sub);line-height:1.75}
-
-/* key modal */
-.kmodal{position:fixed;inset:0;z-index:900;background:rgba(6,6,10,.82);backdrop-filter:blur(14px);
-  display:flex;align-items:center;justify-content:center;padding:22px;animation:bsFade .28s var(--ease-out) both}
-.kmodal .box{background:var(--card);border:1px solid var(--line2);border-radius:22px;padding:26px 22px;
-  max-width:420px;width:100%;animation:cardin .38s var(--ease-out) both}
-.kmodal h3{font-size:18px;font-weight:800;letter-spacing:-.02em;margin-bottom:9px}
-.kmodal p{font-size:13px;color:var(--sub);line-height:1.75;margin-bottom:16px}
-.kmodal input{width:100%;background:var(--card2);border:1px solid var(--line2);color:var(--text);
-  border-radius:13px;padding:14px;font-family:inherit;font-size:16px;margin-bottom:12px;min-height:50px}
-.kmodal .acts{display:flex;gap:9px}
-.kmodal .acts button{flex:1;min-height:48px}
-
-
-/* ---------- scrub bar ---------- */
-.scrubrow{display:flex;align-items:center;gap:11px;margin-top:12px}
-.tcode{font-size:11px;font-weight:700;color:var(--dim);font-variant-numeric:tabular-nums;
-  min-width:34px;text-align:center;flex-shrink:0}
-#kSeek{-webkit-appearance:none;appearance:none;flex:1;height:22px;background:transparent;
-  cursor:pointer;min-height:0;padding:0;border:none}
-#kSeek::-webkit-slider-runnable-track{height:5px;border-radius:99px;background:rgba(255,255,255,.10)}
-#kSeek::-moz-range-track{height:5px;border-radius:99px;background:rgba(255,255,255,.10)}
-#kSeek::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:99px;
-  background:var(--acc);margin-top:-5.5px;border:none;
-  box-shadow:0 0 0 4px rgba(167,139,250,.18);transition:transform .15s var(--ease-spring)}
-#kSeek::-moz-range-thumb{width:16px;height:16px;border-radius:99px;background:var(--acc);border:none}
-#kSeek:active::-webkit-slider-thumb{transform:scale(1.25)}
-#kSeek:disabled{opacity:.35;cursor:default}
-
-/* ---------- secondary CTA ---------- */
-.secondcta{width:100%;margin-top:11px;min-height:48px;font-size:13.5px;font-weight:700;
-  border-radius:14px;background:transparent;border:1px solid var(--line2);color:var(--sub)}
-.secondcta:hover:not(:disabled){color:var(--text);border-color:var(--acc-line)}
-#kCountStatus{margin-top:11px;font-size:12.5px;line-height:1.7}
-
-/* ---------- tally table ---------- */
-.thead,.trow{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line)}
-.thead{border-bottom:1px solid var(--line2);padding-bottom:9px}
-.thead .ta,.thead .tb{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
-.trow:last-child{border-bottom:none}
-.tl{flex:1;font-size:12.5px;color:var(--sub)}
-.ta,.tb{width:64px;text-align:right;font-size:16px;font-weight:800;font-variant-numeric:tabular-nums;
-  letter-spacing:-.02em;flex-shrink:0}
-.ta{color:var(--red)}.tb{color:var(--blue)}
-.thead .ta,.thead .tb{color:var(--dim)}
-@media(max-width:400px){.ta,.tb{width:52px;font-size:15px}.tl{font-size:12px}}
-
-/* ---------- counted scorecard ---------- */
-.rdtable{background:var(--card2);border:1px solid var(--line);border-radius:14px;overflow:hidden}
-.rdrow{display:flex;align-items:center;padding:11px 14px;border-bottom:1px solid var(--line);font-size:13px}
-.rdrow:last-child{border-bottom:none}
-.rdrow span{flex:1;color:var(--sub);font-size:12.5px}
-.rdrow b{width:44px;text-align:center;font-variant-numeric:tabular-nums;font-weight:700;color:var(--dim)}
-.rdrow b.w{color:var(--text);font-weight:900}
-.rdrow.tot{background:rgba(255,255,255,.03);font-weight:800}
-.rdrow.tot span{color:var(--text);font-weight:700}
-
+.updatebar{position:fixed;left:12px;right:12px;bottom:calc(86px + env(safe-area-inset-bottom));z-index:500;
+  background:var(--acc);color:#0d0a18;border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;
+  font-size:13px;font-weight:700;box-shadow:0 10px 30px rgba(0,0,0,.45);animation:cardin .4s cubic-bezier(.22,.9,.25,1) both}
+.updatebar span{flex:1}
+.updatebar button{background:#0d0a18;color:#fff;border:none;min-height:34px;padding:6px 14px;border-radius:99px;font-size:12px;font-weight:800}
 </style></head>
-<body class="booting">
-<div id="bootSplash">
-  <div class="bsInner">
-    <div class="bsWord">
-      <span>t</span><span>i</span><span>t</span><span>a</span><span>n</span><em>.</em>
-    </div>
-    <div class="bsArc"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54"/><circle cx="60" cy="60" r="54" class="run"/></svg></div>
-    <div class="bsMsg" id="bootMsg">&nbsp;</div>
-  </div>
-  <div class="bsFoot">on-device</div>
-</div>
-</div>
+<body>
 <div class="offline-banner" id="offlineBanner">Offline — logging locally</div>
 <header>
   <span class="wordmark">titan</span>
@@ -1019,6 +736,7 @@ body{line-height:1.62}
     <div class="rings" id="homeRings"></div>
     <div style="text-align:center;margin-top:8px"><button class="sm primary" onclick="goTab('fuel')">+ Log Food</button></div>
   </div>
+  <div class="card" id="sodCard" onclick="goTab('coach')"><h2>Shot of the day</h2><div id="sodBox"></div></div>
   <div class="card"><h2>Insights</h2><div id="insightList"></div></div>
 </div>
 
@@ -1071,157 +789,137 @@ body{line-height:1.62}
 
 <!-- ================= FUEL ================= -->
 <div class="tabview" id="view-fuel"><div id="foodRoot"></div></div>
+<!-- ================= COACH ================= -->
+<div class="tabview" id="view-coach">
+  <div class="chips scroll" style="margin-bottom:14px">
+    <div class="chip on" data-sub="ask" onclick="subTab('coach','ask')">Ask Coach</div>
+    <div class="chip" data-sub="drills" onclick="subTab('coach','drills')">Drills</div>
+    <div class="chip" data-sub="reaction" onclick="subTab('coach','reaction')">Reaction</div>
+    <div class="chip" data-sub="debrief" onclick="subTab('coach','debrief')">Debrief</div>
+    <div class="chip" data-sub="opponents" onclick="subTab('coach','opponents')">Opponents</div>
+    <div class="chip" data-sub="tactics" onclick="subTab('coach','tactics')">Fight IQ</div>
+  </div>
+  <div id="sub-ask"></div>
+  <div id="sub-drills" style="display:none"></div>
+  <div id="sub-reaction" style="display:none"></div>
+  <div id="sub-debrief" style="display:none"></div>
+  <div id="sub-opponents" style="display:none"></div>
+  <div id="sub-tactics" style="display:none"></div>
+</div>
+
 <!-- ================= SPAR ================= -->
 <div class="tabview" id="view-spar">
-
-  <!-- ---------- FOOTAGE ---------- -->
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+    <span class="badge">Boxing / Kickboxing</span>
+    <span class="badge" id="modelBadge">Model: idle</span>
+    <span class="badge" id="sensBadge">Sensitivity 100%</span>
+    <span class="badge" id="aiBadge">🧠 AI: heuristic</span>
+    <span class="badge" id="calBadge" style="display:none"></span>
+  </div>
+  <div class="spargrid">
+    <div class="card">
+      <h2>Footage</h2>
+      <div id="videoWrap">
+        <video id="video" playsinline webkit-playsinline muted></video>
+        <canvas id="overlay"></canvas>
+        <div id="dropHint">
+          <b>Tap to pick a sparring video (or drop one here)</b>
+          <span>MP4 / MOV / WebM · side view, both fighters fully in frame, good light. 60fps footage = best accuracy.</span>
+        </div>
+      </div>
+      <input type="file" id="fileInput" accept="video/*" hidden>
+      <canvas id="timeline" title="Strike timeline — tap to seek"></canvas>
+      <div class="controls">
+        <button id="playBtn" disabled>▶ Play</button>
+        <div class="seg">
+          <button data-rate="0.25">¼×</button>
+          <button data-rate="0.5">½×</button>
+          <button data-rate="1" class="active">1×</button>
+        </div>
+        <button id="stepBack" disabled>⏮</button>
+        <button id="stepFwd" disabled>⏭</button>
+        <button id="swapBtn" disabled title="Fighters mixed up? Pause where it happens and tap to swap A/B from here on">🔄 Swap here</button>
+        <button id="clearSwapsBtn" style="display:none">Swaps: 0 ✕</button>
+        <select id="modelSel"><option value="heavy">Heavy (max accuracy)</option><option value="full">Full (balanced)</option><option value="lite">Lite (fast)</option></select>
+        <select id="fpsSel"><option value="15">15 fps scan</option><option value="30" selected>30 fps scan</option></select>
+        <select id="modeSel" title="Shadowbox = one athlete, no contact judging"><option value="spar" selected>Sparring (2 fighters)</option><option value="shadow">Shadowbox (solo)</option></select>
+        <select id="sportSel" title="Boxing disables kick detection entirely"><option value="boxing" selected>Boxing (no kicks)</option><option value="kickboxing">Kickboxing</option></select>
+        <button id="analyzeBtn" class="primary" disabled>⚡ Analyze</button>
+      </div>
+      <div class="toggleRow">
+        <label><input type="checkbox" id="showSkel" checked> Skeleton</label>
+        <label><input type="checkbox" id="showTrails" checked> Trails</label>
+        <label><input type="checkbox" id="showLabels" checked> Callouts</label>
+        <label><input type="checkbox" id="showGuard" checked> Guard alerts</label>
+        <label><input type="checkbox" id="hideLowConf"> Hide low-conf</label>
+        <label style="margin-left:auto">Sensitivity <input type="range" id="sensSlider" min="60" max="140" value="100" style="width:110px"></label>
+      </div>
+      <div id="progressWrap">
+        <div id="progressBar"><div id="progressFill"></div></div>
+        <div id="progressText"></div>
+        <button id="cancelBtn" style="margin-top:6px">Cancel</button>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:13px">
+      <div class="card">
+        <h2>Fighter Stats <span style="float:right;font-size:10px;color:var(--dim)">tap a name to rename</span></h2>
+        <div class="fighters">
+          <div class="fcard red"><h3 id="nameA" title="Tap to rename">🔴 Fighter A (left)</h3><div id="statsA"><div class="stat"><span>Run analysis to populate</span></div></div></div>
+          <div class="fcard blue"><h3 id="nameB" title="Tap to rename">🔵 Fighter B (right)</h3><div id="statsB"><div class="stat"><span>Run analysis to populate</span></div></div></div>
+        </div>
+      </div>
+      <div class="card"><h2>Scorecard</h2><div id="scorecard"><span class="dim">Run analysis to score the session.</span></div></div>
+      <div class="card">
+        <h2>Strike Log <span id="evCount" style="float:right;color:var(--acc)"></span></h2>
+        <div id="eventLog"><span class="dim">Strikes, combos, counters and guard drops appear here. Tap a row to jump to it.</span></div>
+        <div class="controls">
+          <button id="csvBtn" class="sm" disabled>⬇ CSV</button>
+          <button id="jsonBtn" class="sm" disabled>⬇ JSON</button>
+          <button id="reportBtn" class="sm" disabled>⬇ Report</button>
+          <button id="reelBtn" class="sm" disabled>🎬 Reel</button>
+          <button id="missBtn" class="sm" disabled title="Pause on a strike the app missed, then tap this">➕ Missed strike</button>
+          <button id="resetAiBtn" class="sm" title="Erase learned model and labels">🧠 Reset AI</button>
+        </div>
+        <div class="dim" style="margin-top:6px">Teach the AI: on any strike row tap <b>✓</b> correct, <b>✗</b> not a strike, <b>✏</b> wrong type. After 8 labels a personal classifier takes over detection.</div>
+      </div>
+      <div class="card"><h2>Tracking Quality</h2><div id="qualityBox"><span class="pill">Awaiting analysis</span></div></div>
+    </div>
+  </div>
   <div class="card">
-    <div class="sparhead">
-      <h2 style="margin:0">Film Review</h2>
-      <span class="badge" id="kModelBadge">Claude &middot; Sonnet 5</span>
-    </div>
-    <div id="videoWrap">
-      <video id="video" playsinline webkit-playsinline muted></video>
-      <canvas id="overlay" style="display:none"></canvas>
-      <div id="dropHint">
-        <b>Tap to pick a clip</b>
-        <span>Side view &middot; both fighters in frame &middot; decent light. 20&ndash;90 seconds is the sweet spot.</span>
-      </div>
-    </div>
-    <input type="file" id="fileInput" accept="video/*" hidden>
-
-    <div class="scrubrow">
-      <span class="tcode" id="kNow">0:00</span>
-      <input type="range" id="kSeek" min="0" max="1000" value="0" step="1" disabled>
-      <span class="tcode" id="kDur">0:00</span>
-    </div>
-    <div class="sparbar">
-      <button id="playBtn" disabled>&#9654;</button>
-      <div class="seg">
-        <button data-rate="0.25">&frac14;&times;</button>
-        <button data-rate="0.5">&frac12;&times;</button>
-        <button data-rate="1" class="active">1&times;</button>
-      </div>
-      <select id="modeSel"><option value="spar" selected>Sparring</option><option value="shadow">Shadowbox</option></select>
-      <select id="sportSel"><option value="boxing" selected>Boxing</option><option value="kickboxing">Kickboxing</option></select>
-    </div>
-
-    <button id="kRun" class="primary bigcta" disabled>Analyze</button>
-    <div class="kmeta">
-      <select id="aiModel">
-        <option value="claude-sonnet-5" selected>Sonnet 5 &middot; balanced</option>
-        <option value="claude-opus-5">Opus 5 &middot; sharpest</option>
-        <option value="claude-haiku-4-5-20251001">Haiku 4.5 &middot; cheapest</option>
-        <option value="claude-fable-5">Fable 5 &middot; max</option>
-      </select>
-      <select id="aiFrames">
-        <option value="auto" selected>Auto frames</option>
-        <option value="8">8 frames</option>
-        <option value="14">14 frames</option>
-        <option value="20">20 frames</option>
-        <option value="28">28 frames</option>
-      </select>
-      <span class="costpill" id="aiCost">~$0.00</span>
-      <button class="sm ghost" id="kKeyBtn" title="Change API key">Key</button>
-    </div>
-    <div class="filmstrip" id="aiStrip"></div>
-    <div id="kStatus"></div>
-    <button id="kCount" class="secondcta" disabled>Count punches on-device</button>
-    <div id="kCountStatus"></div>
-  </div>
-
-  <!-- ---------- TALLY (on-device pose pass) ---------- -->
-  <div class="card" id="cardTally" style="display:none">
-    <div class="sparhead">
-      <h2 style="margin:0">Punch Tally</h2>
-      <span class="badge" id="kTallyQ">&mdash;</span>
-    </div>
-    <div id="kTally"></div>
-    <div class="chartBox" style="height:200px;margin-top:16px"><canvas id="kMomentum"></canvas></div>
-    <div id="kRoundCard" style="margin-top:16px"></div>
-    <div class="dim" style="margin-top:12px;font-size:11.5px;line-height:1.7">
-      Counted from body tracking, entirely on this device. Reliable on clean footage with space between fighters.
-      Counts drift in the clinch and on blurry frames &mdash; the quality badge above grades each clip honestly.
+    <h2>Coach's Corner — what to fix, exactly</h2>
+    <div class="coachGrid">
+      <div class="chartBox" style="height:300px"><canvas id="chartRadar"></canvas></div>
+      <div><h2 id="coachTitleA" style="color:var(--red)">Fighter A</h2><div class="fixList" id="fixesA"><span class="dim">Run analysis for a personalized fix list.</span></div></div>
+      <div><h2 id="coachTitleB" style="color:var(--blue)">Fighter B</h2><div class="fixList" id="fixesB"><span class="dim">Run analysis for a personalized fix list.</span></div></div>
     </div>
   </div>
-
-  <!-- ---------- SCORECARD ---------- -->
-  <div class="card" id="cardScore" style="display:none">
-    <h2>Scorecard</h2>
-    <div id="kScorecard"></div>
+  <div class="card">
+    <h2>Rounds (auto-detected from rest gaps)</h2>
+    <div style="overflow-x:auto"><table class="rounds" id="roundsTable"><tr><td class="dim">Run analysis to populate.</td></tr></table></div>
   </div>
-
-  <!-- ---------- FIGHTER READ ---------- -->
-  <div class="card" id="cardFighters" style="display:none">
-    <h2>Fighter Read</h2>
-    <div class="kfighters" id="kFighters"></div>
-    <div class="chartBox" style="height:270px;margin-top:14px"><canvas id="kRadar"></canvas></div>
+  <div class="chartsRow">
+    <div class="card"><h2>Momentum — cumulative landed differential</h2><div class="chartBox"><canvas id="chartMomentum"></canvas></div></div>
+    <div class="card"><h2>Strikes by Type</h2><div class="chartBox"><canvas id="chartTypes"></canvas></div></div>
+    <div class="card"><h2>Hand Speed Over Time (m/s) — tap to seek</h2><div class="chartBox"><canvas id="chartSpeed"></canvas></div></div>
+    <div class="card"><h2>Guard Discipline (% hands up, per 30s)</h2><div class="chartBox"><canvas id="chartGuard"></canvas></div></div>
+    <div class="card"><h2>Work Rate (strikes per 30s)</h2><div class="chartBox"><canvas id="chartRate"></canvas></div></div>
   </div>
-
-  <!-- ---------- FIXES ---------- -->
-  <div class="card" id="cardFixes" style="display:none">
-    <h2>What To Fix</h2>
-    <div id="kFixes"></div>
-  </div>
-
-  <!-- ---------- MOMENTS ---------- -->
-  <div class="card" id="cardMoments" style="display:none">
-    <h2>Key Moments <span style="float:right;font-size:10px;color:var(--dim)">tap to jump</span></h2>
-    <div id="kMoments"></div>
-  </div>
-
-  <!-- ---------- ROUNDS ---------- -->
-  <div class="card" id="cardRounds" style="display:none">
-    <h2>Round By Round</h2>
-    <div id="kRounds"></div>
-  </div>
-
-  <!-- ---------- SAVE / PROGRESS ---------- -->
-  <div class="card" id="cardProg">
-    <h2>Progress <span style="float:right;font-size:10px;color:var(--dim)">this device only</span></h2>
-    <div class="sparbar" style="margin:0 0 12px">
-      <button id="kSave" class="sm" disabled>Save session</button>
-      <button id="kJson" class="sm" disabled>Export JSON</button>
+  <div class="card">
+    <h2>Spar Progress <span style="float:right;font-size:10px;color:var(--dim)">stored on this device only</span></h2>
+    <div class="controls" style="margin:0 0 10px">
+      <button id="saveSessBtn" class="sm" disabled>💾 Save this session</button>
+      <select id="progFighter" style="width:auto"><option value="A">Track Fighter A</option><option value="B">Track Fighter B</option></select>
     </div>
-    <div class="chartBox" style="height:210px"><canvas id="kProgChart"></canvas></div>
-    <div id="kSessList"></div>
+    <div class="chartBox" style="height:220px"><canvas id="chartProg"></canvas></div>
+    <div id="sessList"></div>
   </div>
-
-  <div class="dim" style="padding:2px 4px 12px;font-size:11.5px;line-height:1.8">
-    Claude reads still frames from the clip, not the full video, so it judges shape and position rather than exact punch counts.
-    The scorecard is a training read, not official judging. Frames are sent to Anthropic on analysis; nothing else in this app leaves the device.
-  </div>
-
-  <!-- ============ LEGACY POSE RIG ============
-       The MediaPipe engine still binds to these nodes on load. Kept in the
-       DOM, hidden, so removing the old UI does not throw and kill the script.
-       Nothing here is reachable by the user. -->
-  <div id="legacyRig" aria-hidden="true" style="display:none!important">
-    <span id="modelBadge"></span><span id="sensBadge"></span><span id="aiBadge"></span><span id="calBadge"></span>
-    <canvas id="timeline"></canvas>
-    <button id="stepBack"></button><button id="stepFwd"></button>
-    <button id="swapBtn"></button><button id="clearSwapsBtn"></button>
-    <select id="modelSel"><option value="lite" selected>lite</option><option value="full">full</option><option value="heavy">heavy</option></select>
-    <select id="fpsSel"><option value="15" selected>15</option><option value="30">30</option></select>
-    <button id="analyzeBtn"></button>
-    <input type="checkbox" id="showSkel"><input type="checkbox" id="showTrails">
-    <input type="checkbox" id="showLabels"><input type="checkbox" id="showGuard"><input type="checkbox" id="hideLowConf">
-    <input type="range" id="sensSlider" min="60" max="140" value="100">
-    <div id="progressWrap"><div id="progressBar"><div id="progressFill"></div></div><div id="progressText"></div><button id="cancelBtn"></button></div>
-    <h3 id="nameA"></h3><h3 id="nameB"></h3><div id="statsA"></div><div id="statsB"></div>
-    <div id="scorecard"></div><div id="eventLog"></div><span id="evCount"></span><div id="qualityBox"></div>
-    <button id="csvBtn"></button><button id="jsonBtn"></button><button id="reportBtn"></button>
-    <button id="reelBtn"></button><button id="missBtn"></button><button id="resetAiBtn"></button>
-    <canvas id="chartRadar"></canvas><canvas id="chartMomentum"></canvas><canvas id="chartTypes"></canvas>
-    <canvas id="chartSpeed"></canvas><canvas id="chartGuard"></canvas><canvas id="chartRate"></canvas>
-    <h2 id="coachTitleA"></h2><h2 id="coachTitleB"></h2><div id="fixesA"></div><div id="fixesB"></div>
-    <table id="roundsTable"></table>
-    <button id="saveSessBtn"></button><select id="progFighter"><option value="A">A</option><option value="B">B</option></select>
-    <canvas id="chartProg"></canvas><div id="sessList"></div>
+  <div class="dim" style="padding:4px 4px 10px;font-size:11px;line-height:1.7">
+    Shortcuts: <kbd>Space</kbd> play/pause · <kbd>←</kbd><kbd>→</kbd> frame step · <kbd>[</kbd><kbd>]</kbd> jump between strikes.
+    Speeds estimated from body proportions (±15%). Landed / blocked / slip / counter calls are geometry estimates, not judge scoring — the scorecard is a training read, not an official result. Tracking degrades in the clinch and motion blur; the Quality panel grades each video honestly. Everything runs locally; footage never leaves this device.
   </div>
 </div>
 
-
+<!-- ================= PROGRESS ================= -->
 <div class="tabview" id="view-progress">
   <div class="chips scroll" style="margin-bottom:14px">
     <div class="chip on" data-sub="analytics" onclick="subTab('progress','analytics')">Analytics</div>
@@ -1261,6 +959,7 @@ body{line-height:1.62}
   <button data-tab="schedule"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 9.5h17M8 3.5v3M16 3.5v3"/><path d="M8.5 14l2 2 4-4"/></svg>Plan</button>
   <button data-tab="train"><svg viewBox="0 0 24 24"><path d="M6.5 7.5v9M17.5 7.5v9M2.5 10v4M21.5 10v4M6.5 12h11"/></svg>Train</button>
   <button data-tab="fuel"><svg viewBox="0 0 24 24"><path d="M12 3c-3 4.5-7 6.5-7 11a7 7 0 0 0 14 0c0-4.5-4-6.5-7-11Z"/></svg>Fuel</button>
+  <button data-tab="coach"><svg viewBox="0 0 24 24"><path d="M12 3.2 4.5 6.4v5.1c0 4.4 3.1 8.4 7.5 9.5 4.4-1.1 7.5-5.1 7.5-9.5V6.4Z"/><path d="M9.2 11.8l2 2 3.6-3.8"/></svg>Coach</button>
   <button data-tab="spar"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg>Spar</button>
   <button data-tab="progress"><svg viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M4 16l5-5 4 4 7-8"/></svg>Stats</button>
   <button data-tab="more"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>More</button>
@@ -1746,9 +1445,9 @@ function goalPerf(){
 }
 
 // ================= MODAL =================
-function modalChoice({title,sub,options,onDone,single}){
+function modalChoice({title,sub,options,onDone,single,preselect}){
   const root=document.getElementById("modalRoot");
-  const sel=new Set();
+  const sel=new Set(preselect||[]);
   const draw=()=>{
     root.innerHTML=`<div class="modal" onclick="if(event.target===this)closeModal()"><div class="msheet">
       <h3>${title}</h3><div class="msub">${sub||""}</div>
@@ -2322,6 +2021,10 @@ function renderHome(){
     st.focusStreak+" days. This is who you are now.";
   document.getElementById("homeRings").innerHTML=
     ring(kcal,KCAL_T(),"CALORIES","kcal","var(--acc)")+ring(pro,PRO_T(),"PROTEIN","g","#c4b5fd")+ring(D.water[t]||0,(+D.set.waterT||8),"WATER","glasses","#60a5fa");
+  const sod=shotOfDay();
+  const sodBox=document.getElementById("sodBox");
+  if(sodBox)sodBox.innerHTML=`<div class="sodt">${sod.t}</div><div class="muted" style="margin-top:6px">${sod.d}</div>
+    <div class="dim" style="margin-top:8px;color:var(--acc);font-weight:700">Open Coach for drills →</div>`;
   document.getElementById("insightList").innerHTML=buildInsights().map(i=>
     `<div class="insight ${i.pos?'pos':''} ${i.sev>=2?'sev'+i.sev:''}"><span class="iic">${i.ic}</span><div><b>${i.title}</b>${i.body}</div></div>`).join("");
 }
@@ -3205,7 +2908,11 @@ function renderSettings(){
   <div class="dim" style="line-height:1.7">Charts library: <b>${typeof window.Chart!=="undefined"?"loaded ✓":"NOT loaded — charts degrade to text, app still works"}</b><br>
   Habits: ${D.habits.length} · Goals: ${D.goals.length} · Mornings: ${D.weekly.length} · Reminders: ${(D.reminders||[]).length} · Journal days: ${Object.keys(D.journal).length}<br>
   Storage used: ~${Math.round((localStorage.getItem(LS)||"").length/1024)} KB</div>
-  <button class="sm" style="margin-top:10px" onclick="window.open(location.pathname+'?selftest=1','_blank')">Run spar engine self-test</button></div>
+  <div style="margin-top:10px" class="dim">App version: <b>${typeof APP_VERSION!=="undefined"?APP_VERSION:"local file"}</b> · ${location.protocol.startsWith("http")?"hosted (auto-updates)":"local file (manual updates)"}</div>
+  <div class="controls" style="margin-top:10px">
+    <button class="sm" onclick="checkForUpdate(true)">↻ Check for update</button>
+    <button class="sm" onclick="window.open(location.pathname+'?selftest=1','_blank')">Run spar engine self-test</button>
+  </div></div>
   <div class="card"><div class="label">About</div>
   <div class="dim" style="line-height:1.8">titan — life system + training lab. Habits, goals with pacing, schedule, life meters, fuel, timers, records, journal, and a pose-tracking spar/shadowbox analyzer (engine v5). Everything runs on-device.</div></div>`;
 }
@@ -3546,6 +3253,16 @@ function renderSetup(){
     <li><b>Sunday:</b> Stats → Weekly Review and Analytics. Adjust goals that are off pace.</li>
   </ol></div>
 
+  <div class="card"><div class="label">Using the Coach tab</div>
+  <ol class="howto">
+    <li><b>Ask Coach:</b> type what's actually going wrong ("they jab me as I step in"). You get a read on why it's happening, tips, and drills. Hit <b>More tips</b> for the deeper layer.</li>
+    <li><b>Build me a 2-week plan</b> turns any answer into drills. You approve which ones — they land on your Plan tab and expire after 14 days.</li>
+    <li><b>Reaction:</b> slip trainer (physically slip and tap the side) and counter trainer. Do a set before every session and watch the milliseconds drop.</li>
+    <li><b>Debrief:</b> five taps right after sparring. If the same problem shows up twice, Coach calls it out and offers a plan.</li>
+    <li><b>Opponents:</b> save who you spar and get a game plan built for their style before the rematch.</li>
+    <li>Coach reads your saved spar sessions — guard %, accuracy, counters, footwork — and opens with what your own data says to fix.</li>
+  </ol></div>
+
   <div class="card"><div class="label">Filming for the Spar tab</div>
   <ol class="howto">
     <li>Phone on a tripod or propped up, <b>side-on</b> to the action, both fighters fully in frame.</li>
@@ -3572,6 +3289,918 @@ function renderSetup(){
     <tr><th>Everything vanished</th><td>Safari data was cleared or you opened a different copy of the file. Restore your backup.</td></tr>
   </table></div>`;
 }
+// ================= COACH =================
+// ============================================================
+// COACH — knowledge base. Written for an orthodox, short-reach
+// pressure fighter. Every entry is tagged so the engine can rank
+// by the user's profile, equipment and current weaknesses.
+// ============================================================
+const COACH_PROFILE_DEFAULT={
+  stance:"orthodox", reach:"short", style:"pressure",
+  weak:["slip","counter_jab","get_inside","get_countered"],
+  gear:["bag","dend","shadow"],
+  intensity:"normal"
+};
+if(!D.coach)D.coach={profile:{...COACH_PROFILE_DEFAULT},asked:[],plans:[],debriefs:[],opponents:[],reaction:[],seen:{},drillLog:[]};
+D.coach.profile=Object.assign({},COACH_PROFILE_DEFAULT,D.coach.profile||{});
+["asked","plans","debriefs","opponents","reaction","drillLog"].forEach(k=>{if(!Array.isArray(D.coach[k]))D.coach[k]=[]});
+if(!D.coach.seen||typeof D.coach.seen!=="object")D.coach.seen={};
+
+const GEAR_LABEL={bag:"Heavy bag",dend:"Double-end bag",shadow:"Shadowbox / mirror",partner:"Partner or pads",rope:"Jump rope",wall:"Wall or door frame",ball:"Tennis ball",towel:"Towel or rope line"};
+
+// ---------- DRILLS ----------
+// tags: problems it fixes · gear needed · anim (existing FRAMES key) · yt (youtube search)
+const DRILLS=[
+ {id:"d_slip_line",n:"Slip line (rope or towel)",gear:["towel","shadow"],tags:["slip","head_movement","get_inside","reaction"],anim:"punch",
+  dose:"3 rounds × 2 min",yt:"boxing slip rope drill",
+  how:"Tie a rope or towel at chin height. Move down the line slipping under it — every slip ends with your eyes still on the line, feet under you.",
+  cues:["Slip with your legs, not your neck — bend the knee on the side you slip toward","Head moves 4-6 inches, no more. Big slips leave you out of position","Come back to centre immediately, hands never drop","End every third slip with a punch so slipping stays offensive"],
+  wrong:"Bending at the waist. That drops your head into uppercut range and kills your balance.",
+  why:"Builds the slip as a leg movement, which is the only version fast enough to use against a real jab."},
+
+ {id:"d_dend_slip",n:"Double-end bag slip and return",gear:["dend"],tags:["slip","counter_jab","reaction","head_movement","timing"],anim:"punch",
+  dose:"4 rounds × 2 min",yt:"double end bag slip counter drill",
+  how:"Push the bag away with a jab. As it rebounds at your face, slip outside it, then immediately fire your own jab or right hand as it passes.",
+  cues:["Do not back up — slip and stay in range, that's the whole point","Slip outside for the right hand, inside for the lead hook","The counter goes as the bag passes your ear, not after","Start at 50% speed until the timing is automatic"],
+  wrong:"Slipping early. If you move before the bag arrives you're guessing, not reacting.",
+  why:"This is the closest thing to a live jab you can train alone. The rebound is unpredictable enough to force real reaction."},
+
+ {id:"d_jab_catch_return",n:"Catch and return",gear:["partner","shadow"],tags:["counter_jab","reaction","get_countered"],anim:"press",
+  dose:"3 rounds × 2 min each side",yt:"boxing catch and return jab drill",
+  how:"Partner jabs at 50-70%. You catch it on your rear glove and fire your own jab back in the same beat — catch and return are one motion, not two.",
+  cues:["Catch, don't swat — swatting turns your shoulders and opens you up","Your return leaves before their hand is fully back","Small step in with the return so you gain ground every exchange","Chin stays behind the lead shoulder the whole time"],
+  wrong:"Catching then pausing to admire it. The pause is where their right hand lands.",
+  why:"The single highest-percentage answer to a jab for a shorter fighter: you neutralise it and gain ground in one beat."},
+
+ {id:"d_slip_jab_counter",n:"Slip outside, right hand over",gear:["partner","dend","shadow"],tags:["counter_jab","slip","get_inside","short_reach"],anim:"punch",
+  dose:"4 rounds × 90 s",yt:"slip outside jab counter right hand",
+  how:"As the jab comes, slip to the outside of it (your right, their left) and throw the right hand straight over the top of their extended arm.",
+  cues:["Slip and punch are the same motion — the slip loads the right hand","Their extended jab arm is a rail: your right slides right over it","Step your lead foot outside theirs as you land it","Follow with a left hook so you're not standing there admiring it"],
+  wrong:"Slipping straight back instead of outside. That leaves you in front of the jab, just further away — worst place for a short fighter.",
+  why:"Turns their longest weapon into your entry. Every short pressure fighter in history lived on this counter."},
+
+ {id:"d_roll_under",n:"Roll under the jab into the body",gear:["shadow","bag"],tags:["counter_jab","head_movement","get_inside","body_work"],anim:"squat",
+  dose:"3 rounds × 2 min",yt:"roll under jab body shot boxing",
+  how:"Roll under the incoming jab, transferring weight to your lead leg, and come up on the inside with a hook to the ribs.",
+  cues:["Roll with legs — sit into a quarter squat, don't duck the head down","Come up in the pocket, not backwards","The body shot lands as you rise, using the leg drive","Head off the centre line when you come up — never straight back where you left"],
+  wrong:"Rolling with a straight back leg. You end up bent over with your head at knee height and no punch available.",
+  why:"Short fighters get inside under the jab, not around it. This turns their range weapon into your entry ticket."},
+
+ {id:"d_shell_reaction",n:"Wall tennis-ball reaction",gear:["ball","wall"],tags:["reaction","slip","head_movement"],anim:"punch",
+  dose:"3 rounds × 90 s",yt:"tennis ball wall reaction boxing drill",
+  how:"Throw a tennis ball against a wall from close range and slip it as it comes back. Alternate slipping left and right.",
+  cues:["Stand closer than feels comfortable — that's real punching range","React, don't anticipate: change your throwing speed randomly","Keep both hands up the whole time","Add a counter punch after every successful slip"],
+  wrong:"Standing far back so the ball is easy. Easy reps train nothing.",
+  why:"Trains genuine reaction time to a fast object at close range with zero equipment cost."},
+
+ {id:"d_mirror_feint",n:"Mirror feint and read",gear:["shadow"],tags:["reaction","timing","get_inside","feints"],anim:"punch",
+  dose:"2 rounds × 3 min",yt:"boxing feint drills shadowboxing",
+  how:"Shadowbox while feinting every entry: shoulder feint, level change, foot stomp. Watch yourself in the mirror to check nothing telegraphs.",
+  cues:["A feint is a punch you decided not to finish — it must look identical for the first 3 inches","Feint high, enter low. Feint low, enter high","Feet stay under you so the real shot can follow instantly","Reset the guard between every feint"],
+  wrong:"Waving the hand around. That reads as noise, not threat, and nobody reacts to it.",
+  why:"Short fighters cannot walk in clean. Feints buy the half-second you need to close the gap safely."},
+
+ {id:"d_pocket_return",n:"Snap-back guard drill",gear:["bag","shadow"],tags:["get_countered","guard","combos"],anim:"pushup",
+  dose:"3 rounds × 2 min",yt:"boxing hands back to guard drill",
+  how:"Throw combinations on the bag where the return of every punch is faster than the punch itself. Recording your rounds and watching the return speed is the fastest fix.",
+  cues:["Punch out AND back at the same speed — the return is a rep too","Land the last shot of every combo and immediately slip or pivot","Chin tucked behind the lead shoulder before your hand is back","Nothing above 3 punches until returns are automatic"],
+  wrong:"Leaving the last punch hanging while you look at the bag. That's exactly when the counter comes.",
+  why:"Your spar data measures guard-return time. This drill is what moves that number."},
+
+ {id:"d_pivot_exit",n:"Land and pivot out",gear:["bag","shadow"],tags:["get_countered","footwork","angles"],anim:"jump",
+  dose:"4 rounds × 90 s",yt:"boxing pivot after combination angle",
+  how:"After every combination, pivot 45° off your lead foot so you finish on an angle instead of in front of them.",
+  cues:["Pivot on the ball of the lead foot, rear foot swings around","The pivot starts as the last punch lands, not after","Reset your stance immediately — no crossed feet","Fire one shot from the new angle to prove you're set"],
+  wrong:"Stepping straight back after a combo. You stay on their centre line at their perfect range.",
+  why:"Short fighters get countered because they stay where they punched from. Angles fix that without giving up range."},
+
+ {id:"d_entry_level",n:"Level-change entry",gear:["shadow","bag"],tags:["get_inside","head_movement","short_reach"],anim:"squat",
+  dose:"3 rounds × 2 min",yt:"boxing level change entry pressure",
+  how:"Practise closing distance by dropping your level a few inches on the way in, then coming up inside their reach with a hook.",
+  cues:["Level change is knees, not back","Change level BEFORE you step, not as you arrive","Come up already punching","Two steps maximum — long entries get you hit"],
+  wrong:"Walking in upright behind a high guard. You'll eat the jab every single time.",
+  why:"Six inches of level change beats six inches of reach. This is how the short fighter erases the height difference."},
+
+ {id:"d_ring_cut",n:"Ring cutting footwork",gear:["shadow"],tags:["get_inside","footwork","pressure"],anim:"run",
+  dose:"3 rounds × 2 min",yt:"ring cutting drill boxing pressure fighter",
+  how:"Shadowbox against an imaginary mover. Instead of chasing them in circles, step to cut off the direction they're travelling.",
+  cues:["Cut the ring by stepping to where they're going, not where they are","Lead foot outside their lead foot takes their escape route away","Never cross your feet — small steps, stance intact","Trap them on the ropes then immediately work the body"],
+  wrong:"Following them around the ring. You'll never catch a mover by chasing; you catch them by shrinking the space.",
+  why:"Pressure without ring-cutting is just walking forward into jabs. This is the footwork half of pressure fighting."},
+
+ {id:"d_body_pressure",n:"Body-first pressure rounds",gear:["bag"],tags:["body_work","get_inside","pressure"],anim:"chop",
+  dose:"4 rounds × 2 min",yt:"heavy bag body work drill boxing",
+  how:"Whole round where every combination starts with a body shot. Head shots only allowed after two body shots have landed.",
+  cues:["Bend the knees to reach the body, don't reach down with your arms","Dig the hook in under the elbow, not into it","Body work drops their hands — the head shot is free afterwards","Stay in range after: body work is close-quarters"],
+  wrong:"Slapping at the body from outside. If you're not close enough to be hit, you're not close enough to hurt the body.",
+  why:"Body shots are the shorter fighter's equalizer: they're closest to you, and they buy the head later in the fight."},
+
+ {id:"d_jab_parry_hook",n:"Parry to lead hook",gear:["partner","dend"],tags:["counter_jab","angles","short_reach"],anim:"chop",
+  dose:"3 rounds × 90 s",yt:"parry jab lead hook counter",
+  how:"Parry the jab down and across with the rear hand, then immediately step your lead foot outside and fire the lead hook.",
+  cues:["Small parry — an inch is enough, don't reach across your body","The step is what makes the hook land, not the arm","Hook goes to where their head will be after the parry turns them","Rear hand comes straight back to the cheek"],
+  wrong:"Big sweeping parries that turn your torso and open your whole left side.",
+  why:"Gives you a second answer to the jab so you're not predictable with only the right hand over the top."},
+
+ {id:"d_shadow_defensive",n:"Defensive-only rounds",gear:["shadow","partner"],tags:["slip","head_movement","get_countered","reaction"],anim:"punch",
+  dose:"2 rounds × 3 min",yt:"defensive only sparring round drill",
+  how:"A full round where you may not punch. Slip, roll, parry, pivot only. If sparring, tell your partner to work at 50%.",
+  cues:["No backing straight up — move to angles","Keep the same rhythm you'd use when punching","Breathe out on every defensive movement","Count how many clean shots get through and beat that number next round"],
+  wrong:"Turtling behind a high guard and freezing. Covering up is not defence, it's just waiting.",
+  why:"Removing the punching option forces the defensive habits to become automatic instead of an afterthought."},
+
+ {id:"d_rope_rhythm",n:"Rope rhythm change",gear:["rope"],tags:["timing","conditioning","reaction"],anim:"rope",
+  dose:"5 rounds × 2 min",yt:"jump rope tempo change boxing footwork",
+  how:"Jump rope switching tempo every 15 seconds on a random signal (or when the song changes beat).",
+  cues:["Change speed instantly, not gradually","Stay on the balls of your feet","Relaxed shoulders even at max speed","Land quiet — noise means you're jumping too high"],
+  wrong:"Grinding at one steady pace. Fights don't have one pace.",
+  why:"Rhythm changes are what let a pressure fighter enter unpredictably. This builds them in your feet first."},
+
+ {id:"d_breath_pressure",n:"Pressure-round breathing",gear:["bag","shadow"],tags:["conditioning","pressure","gas_tank"],anim:"run",
+  dose:"3 rounds × 3 min",yt:"boxing breathing technique rounds",
+  how:"Work a full round at pressure pace, breathing out sharply on every punch and nasal-breathing during resets. No breath holding.",
+  cues:["Sharp exhale on every shot, no exceptions","Nose breathe when you reset — mouth breathing spikes your heart rate","Relax the shoulders between exchanges","If you can't nasal breathe on the reset, you're working above your pace"],
+  wrong:"Holding your breath through combinations. That's why the gas tank empties in round 2.",
+  why:"Pressure fighting costs more fuel than boxing does. Breathing is the cheapest conditioning gain available."},
+];
+
+// ---------- PROBLEMS: what the user types → what's actually happening ----------
+// kw: match words · tips: layered (first 3 shown, "more tips" reveals deeper ones)
+const PROBLEMS=[
+ {id:"p_eat_jab",title:"Getting hit by the jab on the way in",
+  kw:["jab","eating jabs","get jabbed","jab keeps landing","poked","stiff arm","jabbing me","jab me","keep getting hit coming in","hit on the way in","counter the jab","counter jab","jab counter","countering the jab","answer the jab","beat the jab"],
+  tags:["counter_jab","get_inside","short_reach"],
+  read:"You're crossing their range in a straight line at a constant speed. A jab only has to be thrown once to meet you there — the fighter with more reach wins that trade every time. The fix isn't speed, it's changing the line and the timing of the entry.",
+  tips:[
+   {t:"Never enter on a straight line",d:"Step off at a 30-45° angle as you close. If you walk up the centre line, their jab is already pointed at your face. Angle first, then close."},
+   {t:"Enter behind a level change",d:"Drop 4-6 inches at the knees on the way in and come up inside their reach. Their jab is aimed where your head was, not where it is."},
+   {t:"Make them jab first, then move",d:"Feint an entry, watch the jab fire at nothing, then enter into the gap while their hand is coming back. Their jab is a door that closes for half a second after every throw."},
+   {t:"Slip outside and answer immediately",d:"Slip to the outside of the jab and put your right hand straight over the top of their extended arm. Punishing it twice makes them stop throwing it freely.",deep:true},
+   {t:"Take the space in two steps, not five",d:"Long walk-ins mean more time in their range. Get from outside to inside in two explosive steps, then stay there — the trip is the dangerous part, not the destination.",deep:true},
+   {t:"Head off the centre line at all times",d:"Even standing still, your head should never be directly above your lead foot on their centre line. Small constant movement makes their jab a guessing game.",deep:true},
+   {t:"Attack the jab hand itself",d:"Parry it down, tap it, catch it. A jab hand that keeps getting interfered with stops being thrown with confidence in about a round.",deep:true}],
+  drills:["d_slip_jab_counter","d_entry_level","d_jab_catch_return","d_mirror_feint","d_dend_slip"]},
+
+ {id:"p_slow_slip",title:"Reaction time on slips and head movement",
+  kw:["slip","slipping","head movement","reaction","reflex","too slow","react","see it coming","cant slip","can't slip","get caught","frozen","freeze"],
+  tags:["slip","head_movement","reaction"],
+  read:"Reaction speed to punches is mostly recognition, not raw reflex. Fast fighters aren't reacting quicker — they're reading the shoulder and starting earlier. Two things fix this: training slips as a leg movement so they're physically faster, and training your eyes on the right target.",
+  tips:[
+   {t:"Watch the chest, not the hands",d:"Hands move too fast to track and they lie. The chest and lead shoulder tell you what's coming a fraction earlier, and that fraction is the whole game."},
+   {t:"Slip with your legs",d:"A slip driven by bending the knee is faster and keeps you balanced. Slipping by moving your neck is slow, tiring, and leaves you unable to punch back."},
+   {t:"Never slip more than 6 inches",d:"Big movement feels safe and is actually slower to recover from. Small slip, stay in range, punch back. Distance is not the goal — being not-there is."},
+   {t:"Slip on a schedule until it's a habit",d:"Every third punch you throw, slip after it. Doing it on your own clock builds the movement pattern so it's available when someone else sets the clock.",deep:true},
+   {t:"Train reaction with something unpredictable",d:"Double-end bag or a tennis ball off a wall. Shadowboxing can't surprise you, and unsurprised reps don't build reaction time.",deep:true},
+   {t:"Relax your shoulders",d:"Tense muscles react slower. If your traps are up around your ears you've added 50ms to every defensive movement before it starts.",deep:true},
+   {t:"Blink less, breathe out",d:"Fighters blink and hold their breath when a punch comes — both freeze you. Exhaling on the slip keeps you loose and keeps your eyes open.",deep:true},
+   {t:"Sleep is a reaction-time drug",d:"Reaction time degrades measurably under 7 hours. Your sleep log in titan is not separate from this problem — it IS this problem, some nights.",deep:true}],
+  drills:["d_slip_line","d_shell_reaction","d_dend_slip","d_shadow_defensive","d_slip_jab_counter"]},
+
+ {id:"p_countered",title:"Getting countered when you attack",
+  kw:["countered","counter","get hit back","after i punch","hands down","caught","trade","exchange","punished","hit when i attack"],
+  tags:["get_countered","guard","angles"],
+  read:"Your punches are probably fine. The problem is the half-second after them: your hand comes back slowly, you stay square, and you're still standing where you threw from. That's a stationary target at perfect range — every fighter takes that trade.",
+  tips:[
+   {t:"The return is part of the punch",d:"Punch out and back at the same speed. Most fighters throw at 100% and return at 50%, which is exactly the window a counter lives in."},
+   {t:"Never finish a combo standing still",d:"Last punch lands, you pivot, slip, or step off-line — always. Pick one and make it automatic so you're never a target after a combination."},
+   {t:"Shorten your combinations",d:"Three punches maximum until the exits are automatic. Five-punch combos are where the discipline breaks down and the counter lands."},
+   {t:"Keep the rear hand home when the lead works",d:"When you jab, the right hand stays glued to your cheek. Both hands moving at once is how you get hit clean.",deep:true},
+   {t:"Chin behind the lead shoulder",d:"Rolling the lead shoulder up as you punch puts bone between their counter and your jaw. Costs nothing, works constantly.",deep:true},
+   {t:"Watch them, not your target",d:"Eyes stay on their chest through the whole combination. Looking at where you're punching means you never see the answer coming.",deep:true},
+   {t:"Film one round and count",d:"Count how many times your hand takes longer than half a second to come home. That number is your real problem, and it drops fast once you can see it.",deep:true}],
+  drills:["d_pocket_return","d_pivot_exit","d_shadow_defensive","d_slip_line"]},
+
+ {id:"p_inside",title:"Getting inside and staying there",
+  kw:["inside","close distance","get close","pressure","closing","distance","range","cut off","cutting off","cut the ring","ring cutting","corner them","walk them down","pocket","chasing","cant catch them","they keep moving","mover","body work","body shots","body punching","infighting","in the pocket"],
+  tags:["get_inside","pressure","footwork","short_reach"],
+  read:"Getting in is a footwork and timing problem, not a toughness problem. Staying in is a different skill again — most short fighters get inside, land one shot, then get pushed or walked out and have to pay the entry price all over again.",
+  tips:[
+   {t:"Cut the ring, don't chase",d:"Step to where they're going, not where they are. Chasing a mover in circles gets you jabbed for three minutes; taking their escape route traps them in ten seconds."},
+   {t:"Lead foot outside theirs",d:"Once your lead foot is outside their lead foot, their power hand is pointing at nothing and you're standing in their blind angle. This one detail decides most inside exchanges."},
+   {t:"Work the body the second you arrive",d:"Body shots are legal, close, and they lower their hands. If you arrive inside and throw at the head first, you're fighting their best defence for no reason."},
+   {t:"Head on their chest, not in front of it",d:"Inside range means your head is off their centre line and touching. Being close but square is the worst of both worlds.",deep:true},
+   {t:"Beat the clinch before it starts",d:"Taller fighters clinch to survive. Fight for underhooks early, or punch the moment they reach — the reach is a free half-second.",deep:true},
+   {t:"Feint your way in, don't walk",d:"Every entry needs a lie in front of it. Feint high enter low, feint the jab step the angle. Walking in behind a guard is how short fighters get outboxed.",deep:true},
+   {t:"Reset the pressure, don't reset the range",d:"After an exchange, pivot and stay close instead of stepping out. Every exit means paying the entry cost again.",deep:true}],
+  drills:["d_ring_cut","d_entry_level","d_body_pressure","d_mirror_feint","d_pivot_exit"]},
+
+ {id:"p_gas",title:"Gassing out in later rounds",
+  kw:["gas","tired","conditioning","cardio","fade","slow down","out of breath","gassing","stamina","exhausted","round 3"],
+  tags:["conditioning","gas_tank","pressure"],
+  read:"Pressure fighting is the most expensive style there is. If you fade, it's usually breath-holding and constant tension long before it's actual fitness — most fighters can fix a full round of gas without any extra conditioning work.",
+  tips:[
+   {t:"Exhale on every single punch",d:"Sharp breath out with every shot. Breath holding during combinations is the number one cause of round-two fade."},
+   {t:"Be loose between exchanges",d:"Tension burns fuel with nothing to show for it. Hands up but shoulders and hands relaxed until the moment of impact."},
+   {t:"Pressure in bursts, not constantly",d:"Ten seconds of real pressure then a controlled reset beats three minutes of walking forward. Constant forward pressure at one pace is easy to time and expensive to run."},
+   {t:"Nose breathe on the reset",d:"If you can't breathe through your nose between exchanges, your pace is above your engine. That's a real-time gauge you can use mid-round.",deep:true},
+   {t:"Fix your sleep first",d:"Under-slept fighters gas earlier and recover slower between rounds. Check your morning log for the week before blaming conditioning.",deep:true},
+   {t:"Train the last round first sometimes",d:"Start a bag session with your hardest round instead of finishing with it. Teaches you to produce output on tired legs.",deep:true}],
+  drills:["d_breath_pressure","d_rope_rhythm","d_body_pressure"]},
+
+ {id:"p_predictable",title:"Being predictable / getting read",
+  kw:["predictable","read me","timing me","they know","same thing","pattern","one dimensional","telegraph","telegraphing"],
+  tags:["feints","timing","combos"],
+  read:"Patterns are invisible to the person making them. If a partner starts beating you to the punch in round two, you gave them a rhythm to time — usually the same entry, the same combination, or the same tell before you commit.",
+  tips:[
+   {t:"Break your own rhythm",d:"Throw on the half-beat. Two fast, one slow. Enter early, enter late, skip an entry entirely. Predictable timing beats predictable punches for getting you hit."},
+   {t:"Never start with the same punch twice in a row",d:"If every exchange starts with a jab, they only have to solve one thing. Start with a feint, a body shot, or a step."},
+   {t:"Find your tell on film",d:"Everyone has one: a shoulder dip, a wide step, a held breath. Watch one round back at half speed specifically hunting for what you do right before you commit."},
+   {t:"Use the same setup for different endings",d:"Same feint, three different follow-ups. Now the setup gives them no information at all.",deep:true},
+   {t:"Change levels between combinations",d:"Even standing still, cycling your height makes your rhythm hard to time.",deep:true}],
+  drills:["d_mirror_feint","d_shadow_defensive","d_pivot_exit"]},
+
+ {id:"p_southpaw",title:"Fighting a southpaw",
+  kw:["southpaw","lefty","left handed","opposite stance","open stance"],
+  tags:["southpaw","footwork","angles"],
+  read:"Open-stance fighting is a foot-position battle before it's a punching battle. Whoever gets their lead foot outside the other's controls the angle, the power hand and the exit routes.",
+  tips:[
+   {t:"Win the outside foot",d:"Keep your lead foot outside their lead foot. From there your right hand has a clean lane and their left is pointing past you."},
+   {t:"The right hand is your main weapon",d:"Straight right down the middle over their lead hand is the highest-percentage shot in this matchup. Jab to set the range, right to score."},
+   {t:"Circle away from their power",d:"For an orthodox fighter that means moving to your left, away from their left hand. Circling the wrong way walks into it."},
+   {t:"Lead hook to the body",d:"Their body is open on the lead side in open stance. Lead hook to the ribs lands constantly and nobody expects it.",deep:true},
+   {t:"Watch out for their lead-hand hook",d:"Southpaws counter orthodox entries with the right hook. Keep your rear hand high on the way in.",deep:true}],
+  drills:["d_jab_parry_hook","d_ring_cut","d_slip_jab_counter"]},
+
+ {id:"p_taller",title:"Fighting someone taller / longer",
+  kw:["taller","longer","tall","rangy","lanky","bigger","outreach","reach advantage","keeping me away"],
+  tags:["short_reach","get_inside","counter_jab","pressure"],
+  read:"Height only helps at their range. The whole job is making the fight happen at your range, and doing it often enough that they never settle. This is the entire reason your style exists.",
+  tips:[
+   {t:"Two ranges only: outside their reach, or inside it",d:"The middle is where they win every exchange. Be far enough that nothing lands, or close enough that their arms are too long to work."},
+   {t:"Make them pay for the jab every time",d:"Slip outside and right hand over, or parry and hook. If the jab costs them, the jab slows down, and the whole gap closes."},
+   {t:"Attack the body relentlessly",d:"Tall fighters have further to bend and hate it. Body work brings their hands down and their head into your range."},
+   {t:"Trap them on the ropes and stay",d:"Ring cutting matters more against tall fighters than anyone. Once they're on the ropes their reach means nothing.",deep:true},
+   {t:"Get low without getting bent over",d:"Level change from the knees keeps you able to punch. Bending at the waist puts your head exactly where their uppercut lives.",deep:true}],
+  drills:["d_entry_level","d_ring_cut","d_body_pressure","d_slip_jab_counter","d_roll_under"]},
+
+ {id:"p_pressure_rusher",title:"Fighting someone who rushes / pressures you",
+  kw:["rusher","rushing","rushes","aggressive","pressure me","comes forward","swarming","brawler","wild","charging","runs at me","bum rush"],
+  tags:["angles","counter","footwork"],
+  read:"A rusher wants a phone-booth fight on their terms. You beat them by making them miss into space and by punishing the entry, not by backing up in a straight line.",
+  tips:[
+   {t:"Pivot, don't retreat",d:"Backing straight up keeps you in front of a moving freight train. Pivot off the lead foot and let them run past your shoulder."},
+   {t:"Meet them coming in",d:"A punch landing on someone moving toward you does double damage. Jab hard as they step, then move off-line."},
+   {t:"Use the uppercut when they lower their head",d:"Rushers duck in. The uppercut is waiting for exactly that and it ends the rushing quickly."},
+   {t:"Tie them up early, not late",d:"If they get in clean, clinch immediately rather than trading in a bad position.",deep:true}],
+  drills:["d_pivot_exit","d_shadow_defensive","d_jab_catch_return"]},
+
+ {id:"p_nerves",title:"Nerves and freezing up in sparring",
+  kw:["nervous","scared","freeze","anxiety","panic","overwhelmed","tense","stiff","adrenaline"],
+  tags:["mental","reaction"],
+  read:"Freezing is a breathing and familiarity problem, not a courage problem. Adrenaline makes you tense, tunnel-visioned and breath-holding, all of which slow reaction time — which is exactly what you're trying to improve.",
+  tips:[
+   {t:"Breathe out first",d:"Long exhale before the round starts and sharp exhales throughout. It's the fastest way to drop heart rate and open your peripheral vision back up."},
+   {t:"Give yourself one job per round",d:"Not 'do everything well' — just 'jab and pivot this round.' A single simple task stops the freeze."},
+   {t:"Spar more, spar lighter",d:"Frequent light sparring beats occasional hard sparring for removing the freeze. It's exposure, not toughness."},
+   {t:"Expect to get hit and keep working",d:"The freeze usually comes after the first clean shot. Practise answering immediately after being hit so the response is trained, not chosen.",deep:true}],
+  drills:["d_breath_pressure","d_shadow_defensive","d_mirror_feint"]},
+];
+
+// ---------- TACTICS LIBRARY (fight IQ reading) ----------
+const TACTICS=[
+ {id:"t_ranges",title:"The three ranges, and why the middle kills short fighters",tags:["short_reach","get_inside"],
+  body:"Every fight happens in one of three ranges. Long range is where a jab reaches and nothing else does. Mid range is where straight punches and hooks both land — it is the natural home of the taller fighter, and the most dangerous place on earth for you. Inside range is where the arms are too long to fully extend and hooks, uppercuts and body shots dominate.\\n\\nA taller fighter wants the fight in long and mid. You want it in long (safe, resetting) and inside (yours). The single biggest tactical error short fighters make is living in mid range while they think about entering. Decide before you move: either you are outside everything, or you are going all the way in. There is no waiting room."},
+ {id:"t_jab_answers",title:"Five answers to a jab, ranked",tags:["counter_jab"],
+  body:"1. Slip outside + right hand over. Highest reward, punishes and gains ground. Your bread and butter.\\n2. Catch and return. Safest, keeps you busy, gains a small step every time.\\n3. Parry down + lead hook with an outside step. Great second option so you aren't only right-handed.\\n4. Roll under into the body. Best entry when they jab high and repeatedly.\\n5. Step back out of range. Lowest value — you gave up ground and got nothing, but it beats eating it.\\n\\nRotate at least three of these in any round. A fighter with one answer to the jab is a fighter who eats the second jab."},
+ {id:"t_ring_cut",title:"Cutting the ring instead of chasing",tags:["pressure","footwork","get_inside"],
+  body:"Chasing means following the opponent's path. Cutting means shrinking the space they have to move into. You cut by stepping laterally to the side they are travelling toward, so your lead foot blocks the escape lane — then you close.\\n\\nPractical version: if they circle to your left, step your left foot left and slightly forward. Do not swing your right foot around behind you. Two or three of those steps and they run out of ring, and the fight is at your range without you ever sprinting at them."},
+ {id:"t_feints",title:"Feints: the short fighter's reach extension",tags:["feints","get_inside"],
+  body:"A feint is a punch you decided not to finish. It must look identical to the real thing for the first three inches, or it reads as noise. Feints do three jobs: they freeze the feet, they draw a defensive reaction you can exploit, and they buy you the half-second needed to cross a range you can't cross safely.\\n\\nThe three that matter most for you: the shoulder feint (fakes the jab, freezes them), the level change (fakes the body, lifts their guard), and the foot stomp or step-in feint (draws their jab so you can enter behind it)."},
+ {id:"t_timing",title:"Timing vs speed",tags:["timing","reaction"],
+  body:"Speed is how fast your hand moves. Timing is when you start. Timing beats speed at every level, and it's trainable in a way raw speed mostly isn't.\\n\\nThree timing windows to hunt: as they load a punch (before it's out), as their punch returns (the hand is home but the guard isn't set), and as they step (a foot in the air cannot defend). Watching the chest instead of the hands is what lets you see these windows at all."},
+ {id:"t_pressure_cost",title:"What pressure actually costs, and how to afford it",tags:["pressure","conditioning"],
+  body:"Constant forward pressure at one speed is the most expensive and most timeable thing you can do. Effective pressure is a burst: cut the ring, enter, land 3-6 punches inside, pivot, reset, breathe. Ten to fifteen seconds of work, then five seconds of controlled reset — repeated all round.\\n\\nThat pattern costs a fraction of what non-stop walking forward costs, and it's far harder to time because your entries don't arrive on a metronome."},
+ {id:"t_body",title:"Why body work is your equalizer",tags:["body_work","short_reach"],
+  body:"The body is the closest legal target to a shorter fighter and the hardest one for a taller fighter to protect. Body damage is also cumulative in a way head damage isn't — it doesn't heal between rounds, it lowers hands, and it slows footwork by round three.\\n\\nRule of thumb: two body shots earn one head shot. If you enter and go straight to the head you are attacking their best-defended target from your worst position. Dig to the ribs and floating ribs under the elbow, not into the elbow itself."},
+ {id:"t_defence_layers",title:"Defence is four layers, not one",tags:["slip","head_movement","get_countered"],
+  body:"Layer 1 — distance: not being there at all. Layer 2 — head movement: being there but not where the punch is. Layer 3 — parry/catch: redirecting what does arrive. Layer 4 — block/cover: the last resort, absorbing.\\n\\nMost fighters live on layer 4 because it feels safe. It's the worst one: you take the impact, you can't see, and you can't counter. Your work should push everything up to layers 1-3, which are the layers that let you punch back in the same beat."},
+];
+
+// ---------- MATCH ENGINE ----------
+const CO=()=>D.coach;
+const DRILL=id=>DRILLS.find(d=>d.id===id);
+function gearOK(d){
+  const have=new Set(CO().profile.gear||[]);
+  if(!d.gear||!d.gear.length)return true;
+  return d.gear.some(g=>have.has(g)||g==="shadow");
+}
+function normalize(q){ return (q||"").toLowerCase().replace(/[^a-z0-9\s']/g," ").replace(/\s+/g," ").trim(); }
+function scoreProblem(p,q){
+  const n=normalize(q);
+  if(!n)return 0;
+  const words=n.split(" ").filter(w=>w.length>2);
+  let sc=0;
+  for(const k of p.kw){
+    const kn=normalize(k);
+    if(n.includes(kn))sc+=kn.includes(" ")?6:(kn.length>=6?5:4);
+    else if(words.some(w=>kn.includes(w)&&w.length>3))sc+=1.5;
+  }
+  if(normalize(p.title).split(" ").some(w=>w.length>3&&n.includes(w)))sc+=2;
+  // profile boost: problems tagged with the user's declared weaknesses rank higher
+  const weak=new Set(CO().profile.weak||[]);
+  if(p.tags.some(t=>weak.has(t)))sc*=1.25;
+  return sc;
+}
+function askCoach(q){
+  const ranked=PROBLEMS.map(p=>({p,s:scoreProblem(p,q)})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s);
+  return ranked.slice(0,3).map(x=>x.p);
+}
+function tipsFor(pid,level){
+  const p=PROBLEMS.find(x=>x.id===pid);
+  if(!p)return [];
+  const shallow=p.tips.filter(t=>!t.deep), deep=p.tips.filter(t=>t.deep);
+  const all=[...shallow,...deep];
+  return all.slice(0,3+(level||0)*3);
+}
+function drillsFor(pid){
+  const p=PROBLEMS.find(x=>x.id===pid);
+  if(!p)return [];
+  const list=p.drills.map(DRILL).filter(Boolean);
+  const ok=list.filter(gearOK), no=list.filter(d=>!gearOK(d));
+  return [...ok,...no];
+}
+// what titan's own data says you should work on
+function dataReads(){
+  const out=[];
+  let ss=[];
+  try{ss=JSON.parse(localStorage.getItem("sparSessions_v2")||"[]")}catch(e){}
+  if(ss.length){
+    const last=ss[ss.length-1], A=last.A||{};
+    if(A.guardPct!=null&&A.guardPct<70)out.push({pid:"p_countered",why:"Last session: guard up only "+A.guardPct+"% of the time."});
+    if(A.drops!=null&&A.drops>=3)out.push({pid:"p_countered",why:"Last session: "+A.drops+" guard drops flagged."});
+    if(A.accuracy!=null&&A.accuracy<40)out.push({pid:"p_eat_jab",why:"Last session: only "+A.accuracy+"% of your shots landed — you're throwing from the wrong range."});
+    if(A.counters!=null&&A.counters===0&&A.total>6)out.push({pid:"p_slow_slip",why:"Last session: 0 counters landed off "+A.total+" strikes. You're defending without answering."});
+    if(A.fmi!=null&&A.fmi<0.10)out.push({pid:"p_inside",why:"Last session: footwork index "+A.fmi+" — you're fighting flat-footed."});
+    if(A.fatiguePct!=null&&A.fatiguePct>30)out.push({pid:"p_gas",why:"Last session: output dropped "+Math.round(A.fatiguePct)+"% by the end."});
+    if(A.hmi!=null&&A.hmi<0.18)out.push({pid:"p_slow_slip",why:"Last session: head movement index "+A.hmi+" — you're a stationary target."});
+  }
+  const sl=D.weekly.slice(-5).filter(r=>+r.sleep>0).map(r=>+r.sleep);
+  if(sl.length>=3&&sl.reduce((a,b)=>a+b,0)/sl.length<(+D.set.sleepT||9)-1.5)
+    out.push({pid:"p_slow_slip",why:"You're averaging "+(sl.reduce((a,b)=>a+b,0)/sl.length).toFixed(1)+"h sleep. Reaction time is the first thing that goes."});
+  // repeat debrief issues
+  const recent=CO().debriefs.slice(-4);
+  const counts={};
+  for(const d of recent)for(const t of (d.issues||[]))counts[t]=(counts[t]||0)+1;
+  for(const [k,v] of Object.entries(counts))if(v>=2){
+    const p=PROBLEMS.find(x=>x.id===k);
+    if(p)out.push({pid:k,why:"You've flagged this in "+v+" of your last "+recent.length+" debriefs."});
+  }
+  const seen=new Set();
+  return out.filter(o=>{if(seen.has(o.pid))return false;seen.add(o.pid);return true}).slice(0,4);
+}
+// ---------- PLANS ----------
+const INTENSITY={light:{n:2,label:"Light",note:"2 drills — fits around a full gym week."},
+  normal:{n:4,label:"Standard",note:"4 drills — hard but sustainable alongside normal training."},
+  hard:{n:6,label:"All-in",note:"6 drills — high volume. Watch your sleep and recovery."}};
+function buildPlan(pid,intensity){
+  const p=PROBLEMS.find(x=>x.id===pid);
+  if(!p)return null;
+  const inten=INTENSITY[intensity||CO().profile.intensity||"normal"];
+  const list=drillsFor(pid).filter(gearOK).slice(0,inten.n);
+  const spread=[[1,4],[2,5],[0,3],[1,3,5],[2,6],[0,2,4]];
+  return {pid,title:p.title,intensity:intensity||"normal",
+    drills:list.map((d,i)=>({id:d.id,n:d.n,dose:d.dose,days:spread[i%spread.length]}))};
+}
+function approvePlan(pid,chosenIds,intensity){
+  const p=PROBLEMS.find(x=>x.id===pid);
+  const plan=buildPlan(pid,intensity);
+  if(!plan)return;
+  const until=(()=>{const d=new Date();d.setDate(d.getDate()+14);return fmtDate(d)})();
+  const added=[];
+  for(const dr of plan.drills){
+    if(chosenIds&&!chosenIds.includes(dr.id))continue;
+    const hid="hc"+Date.now()+"_"+dr.id;
+    D.habits.push({id:hid,name:dr.n+" ("+dr.dose+")",type:"manual",cat:"body",days:dr.days,log:{},
+      coachDrill:dr.id,coachPlan:pid,start:today(),until});
+    added.push(hid);
+  }
+  CO().plans.push({id:"pl"+Date.now(),pid,title:p.title,created:today(),until,habits:added,intensity:intensity||"normal"});
+  save();
+  render();
+  toast(added.length+" drill"+(added.length===1?"":"s")+" added to your schedule for 2 weeks ✓","#16a34a");
+}
+function endPlan(plid){
+  const pl=CO().plans.find(x=>x.id===plid);
+  if(!pl)return;
+  if(!confirm("End this plan? Its drills come off your schedule (history is kept)."))return;
+  D.habits=D.habits.filter(h=>!pl.habits.includes(h.id));
+  CO().plans=CO().plans.filter(x=>x.id!==plid);
+  save();render();
+}
+function coachDrillStats(){
+  const ids=new Set(D.habits.filter(h=>h.coachDrill).map(h=>h.id));
+  let done=0;
+  for(const h of D.habits)if(h.coachDrill)done+=Object.keys(h.log||{}).length;
+  // streak of days with at least one coach drill done
+  let streak=0;
+  for(let i=0;i<200;i++){
+    const d=new Date();d.setDate(d.getDate()-i);
+    const k=fmtDate(d);
+    const any=D.habits.some(h=>h.coachDrill&&h.log&&h.log[k]);
+    const due=D.habits.some(h=>h.coachDrill&&habitDue(h,k));
+    if(any)streak++;
+    else if(i===0||!due)continue;
+    else break;
+  }
+  const wk=lastNDays(7);
+  const thisWeek=D.habits.filter(h=>h.coachDrill).reduce((s,h)=>s+wk.filter(k=>h.log&&h.log[k]).length,0);
+  return {total:done,streak,thisWeek,active:D.habits.filter(h=>h.coachDrill).length};
+}
+
+// ---------- COACH UI ----------
+let COACH_VIEW={answers:[],level:{},openTip:{},q:""};
+const YT=q=>"https://www.youtube.com/results?search_query="+encodeURIComponent(q);
+function drillCardHTML(d,ctx){
+  const ok=gearOK(d);
+  const gearTxt=(d.gear||[]).map(g=>GEAR_LABEL[g]||g).join(" · ")||"No equipment";
+  return `<div class="drill ${ok?"":"nogear"}" id="dr_${ctx||"x"}_${d.id}">
+    <div class="drhead" onclick="toggleDrill('${ctx||"x"}','${d.id}')">
+      <div><div class="drname">${d.n}</div><div class="drmeta">${d.dose} · ${gearTxt}${ok?"":" · you don't have this gear"}</div></div>
+      <span class="caret">▶</span>
+    </div>
+    <div class="drbody"><div class="drinner">
+      <div class="dranim">${exSVG(d.anim||"punch")}</div>
+      <div class="drtext">
+        <div class="drhow">${d.how}</div>
+        <ul class="drcues">${d.cues.map(c=>`<li>${c}</li>`).join("")}</ul>
+        <div class="drwrong"><b>Most common mistake:</b> ${d.wrong}</div>
+        <div class="drwhy">${d.why}</div>
+        <div class="controls" style="margin-top:10px">
+          <a class="btnlike sm" href="${YT(d.yt)}" target="_blank" rel="noopener">▶ Watch on YouTube</a>
+          <button class="sm" onclick="logDrillNow('${d.id}')">✓ Did this today</button>
+        </div>
+      </div>
+    </div></div>
+  </div>`;
+}
+function toggleDrill(ctx,id){
+  const el=document.getElementById("dr_"+ctx+"_"+id);
+  if(el)el.classList.toggle("open");
+}
+function logDrillNow(id){
+  const d=DRILL(id);
+  CO().drillLog.push({date:today(),id});
+  const h=D.habits.find(x=>x.coachDrill===id);
+  if(h){h.log=h.log||{};h.log[today()]=1;}
+  save();
+  toast((d?d.n:"Drill")+" logged ✓","#16a34a");
+  renderCoach();renderHome();renderSchedule();
+}
+function answerHTML(p,idx){
+  const lvl=COACH_VIEW.level[p.id]||0;
+  const tips=tipsFor(p.id,lvl);
+  const all=PROBLEMS.find(x=>x.id===p.id).tips.length;
+  const drills=drillsFor(p.id);
+  return `<div class="card ans">
+    <div class="anshead"><div class="label" style="margin:0">${idx===0?"Here's what I'd fix":"Also possible"}</div>
+      ${idx===0?'<span class="anstag">best match</span>':""}</div>
+    <div class="anstitle">${p.title}</div>
+    <div class="ansread">${p.read}</div>
+    <div class="label" style="margin:16px 0 8px">Tips</div>
+    ${tips.map((t,i)=>`<div class="tip ${COACH_VIEW.openTip[p.id+i]?"open":""}" onclick="toggleTip('${p.id}',${i})">
+        <div class="tipn">${i+1}</div>
+        <div class="tipbody"><div class="tipt">${t.t}</div><div class="tipd">${t.d}</div></div>
+      </div>`).join("")}
+    ${tips.length<all?`<button class="sm" style="margin-top:8px" onclick="moreTips('${p.id}')">+ More tips (${all-tips.length} left)</button>`:
+      `<div class="dim" style="margin-top:8px">That's everything I have on this one.</div>`}
+    <div class="label" style="margin:18px 0 8px">Drills that fix it</div>
+    ${drills.map(d=>drillCardHTML(d,p.id)).join("")}
+    <button class="primary" style="margin-top:12px;width:100%" onclick="proposePlan('${p.id}')">Build me a 2-week plan for this</button>
+  </div>`;
+}
+function toggleTip(pid,i){
+  const k=pid+i;
+  COACH_VIEW.openTip[k]=!COACH_VIEW.openTip[k];
+  const el=document.querySelectorAll(`#coachAnswers .tip`);
+  renderCoachAnswers();
+}
+function moreTips(pid){
+  COACH_VIEW.level[pid]=(COACH_VIEW.level[pid]||0)+1;
+  renderCoachAnswers();
+}
+function doAsk(){
+  const q=document.getElementById("coachQ").value.trim();
+  if(!q)return;
+  COACH_VIEW.q=q;
+  const res=askCoach(q);
+  COACH_VIEW.answers=res;
+  COACH_VIEW.level={};COACH_VIEW.openTip={};
+  CO().asked.unshift({q,date:today(),hit:res.length?res[0].id:null});
+  CO().asked=CO().asked.slice(0,30);
+  save();
+  renderCoachAnswers();
+  const el=document.getElementById("coachAnswers");
+  if(el&&el.scrollIntoView)el.scrollIntoView({behavior:"smooth",block:"start"});
+}
+function askTopic(pid){
+  const p=PROBLEMS.find(x=>x.id===pid);
+  if(!p)return;
+  COACH_VIEW.answers=[p];COACH_VIEW.level={};COACH_VIEW.openTip={};
+  const box=document.getElementById("coachQ"); if(box)box.value=p.title;
+  renderCoachAnswers();
+}
+function renderCoachAnswers(){
+  const box=document.getElementById("coachAnswers");
+  if(!box)return;
+  if(!COACH_VIEW.answers.length){
+    box.innerHTML=COACH_VIEW.q?`<div class="card"><div class="label">No direct match</div>
+      <div class="muted">I don't have a specific entry for "${COACH_VIEW.q}". Try describing what physically happens — "they jab me as I step in", "I get hit right after I punch", "I can't catch someone who moves". Or pick a topic below.</div>
+      <div class="chips" style="margin-top:12px">${PROBLEMS.map(p=>`<div class="chip" onclick="askTopic('${p.id}')">${p.title}</div>`).join("")}</div></div>`:"";
+    return;
+  }
+  box.innerHTML=COACH_VIEW.answers.map((p,i)=>answerHTML(p,i)).join("");
+}
+// ---------- PLAN APPROVAL ----------
+function proposePlan(pid){
+  const p=PROBLEMS.find(x=>x.id===pid);
+  const inten=CO().profile.intensity||"normal";
+  const plan=buildPlan(pid,inten);
+  if(!plan||!plan.drills.length)return alert("No drills match your equipment for this. Add gear in the Coach profile.");
+  const dayTxt=ds=>ds.map(d=>["Su","Mo","Tu","We","Th","Fr","Sa"][d]).join(" ");
+  modalChoice({
+    title:"2-week plan: "+p.title,
+    sub:INTENSITY[inten].note+" Approved drills go straight onto your Plan tab and expire in 14 days. Untick anything you don't want.",
+    preselect:plan.drills.map(d=>d.id),
+    options:plan.drills.map(d=>({v:d.id,t:d.n,s:d.dose+" · "+dayTxt(d.days)})),
+    onDone:sel=>{ if(!sel.length)return toast("Nothing added.","#92400e"); approvePlan(pid,sel,inten); }
+  });
+}
+
+// ---------- COACH: main render ----------
+function renderCoach(){
+  const el=document.getElementById("sub-ask");
+  if(!el)return;
+  const reads=dataReads();
+  const st=coachDrillStats();
+  const prof=CO().profile;
+  const active=CO().plans;
+  const sod=shotOfDay();
+  el.innerHTML=`
+  <div class="card coachhero">
+    <div class="label" style="margin-bottom:8px">Your corner</div>
+    <div class="coachline">${coachGreeting()}</div>
+    <div class="coachprof" onclick="editProfile()">${prof.stance} · ${prof.reach} reach · ${prof.style} fighter · tap to edit</div>
+  </div>
+
+  ${reads.length?`<div class="card"><div class="label">What your data says to fix</div>
+    ${reads.map(r=>{const p=PROBLEMS.find(x=>x.id===r.pid);return `<div class="readrow" onclick="askTopic('${r.pid}')">
+      <div><div class="readt">${p?p.title:r.pid}</div><div class="dim">${r.why}</div></div><span class="caret">▶</span></div>`}).join("")}
+  </div>`:""}
+
+  <div class="card">
+    <div class="label">Ask your coach</div>
+    <div class="muted" style="margin-bottom:10px">Describe what's actually happening — the more specific, the better the answer.</div>
+    <textarea id="coachQ" class="coachq" placeholder="e.g. they keep jabbing me as I try to come in, and when I finally get inside I get countered">${COACH_VIEW.q||""}</textarea>
+    <button class="primary" style="margin-top:10px;width:100%" onclick="doAsk()">Ask</button>
+    <div class="chips" style="margin-top:12px">${["they jab me coming in","I react too slow to punches","I get countered after I punch","can't get inside on a taller guy","I gas out","fighting a southpaw"].map(q=>`<div class="chip" onclick="document.getElementById('coachQ').value='${q}';doAsk()">${q}</div>`).join("")}</div>
+  </div>
+
+  <div id="coachAnswers"></div>
+
+  <div class="card">
+    <div class="label">Today's intensity</div>
+    <div class="muted" style="margin-bottom:10px">Sets how much any new plan gives you. Change it any day you want.</div>
+    <div class="chips">${Object.entries(INTENSITY).map(([k,v])=>`<div class="chip ${prof.intensity===k?"on":""}" onclick="setIntensity('${k}')">${v.label}</div>`).join("")}</div>
+    <div class="dim" style="margin-top:8px">${INTENSITY[prof.intensity||"normal"].note}</div>
+  </div>
+
+  <div class="card"><div class="label">Shot of the day</div>
+    <div class="sodt">${sod.t}</div>
+    <div class="muted" style="margin-top:6px">${sod.d}</div>
+    ${sod.drill?`<button class="sm" style="margin-top:10px" onclick="askTopic('${sod.pid}')">Drills for this →</button>`:""}
+  </div>
+
+  <div class="card"><div class="label">Coach work</div>
+    <div class="statgrid">
+      <div class="statpill ${st.streak>=3?"fire hot":""}"><b>${st.streak}</b><span>day streak</span></div>
+      <div class="statpill"><b>${st.thisWeek}</b><span>this week</span></div>
+      <div class="statpill"><b>${st.total}</b><span>drills done</span></div>
+      <div class="statpill"><b>${st.active}</b><span>active drills</span></div>
+    </div>
+    ${active.length?`<div style="margin-top:14px">${active.map(pl=>{
+      const left=daysBetween(today(),pl.until);
+      return `<div class="planrow"><div><div class="readt">${pl.title}</div><div class="dim">${pl.habits.length} drills · ${left>0?left+" days left":"expired"}</div></div>
+      <button class="sm ghost danger" onclick="endPlan('${pl.id}')">End</button></div>`}).join("")}</div>`
+      :`<div class="dim" style="margin-top:12px">No active plan. Ask a question above and hit "Build me a 2-week plan".</div>`}
+  </div>`;
+  renderCoachAnswers();
+}
+function coachGreeting(){
+  const st=coachDrillStats();
+  const reads=dataReads();
+  const h=new Date().getHours();
+  const open=h<11?"Morning.":h<17?"Afternoon.":"Evening.";
+  if(reads.length)return open+" "+reads[0].why+" That's where I'd put this week's work.";
+  if(st.streak>=5)return open+" "+st.streak+" days straight of coach drills. This is exactly how reaction time gets built — keep it boring and keep it daily.";
+  if(!st.total)return open+" Tell me what's going wrong in sparring and I'll give you tips, drills, and a plan you can approve in one tap.";
+  return open+" "+st.thisWeek+" drills logged this week. Ask me anything, or pick a weakness below.";
+}
+function setIntensity(k){ CO().profile.intensity=k; save(); renderCoach(); }
+function editProfile(){
+  const p=CO().profile;
+  modalChoice({
+    title:"Your fighting profile",
+    sub:"Everything the coach says gets ranked against this. Pick your equipment — tips and drills you can't do get pushed to the bottom.",
+    preselect:p.gear,
+    options:[{v:"bag",t:"Heavy bag"},{v:"dend",t:"Double-end bag",s:"Best single tool for jab counters"},
+      {v:"partner",t:"Partner or pads"},{v:"rope",t:"Jump rope"},{v:"ball",t:"Tennis ball + wall"},
+      {v:"towel",t:"Rope or towel line"},{v:"shadow",t:"Shadowbox / mirror",s:"Always available"}],
+    onDone:sel=>{ CO().profile.gear=sel.length?sel:["shadow"]; save(); renderCoach(); toast("Profile updated ✓","#16a34a"); }
+  });
+}
+function shotOfDay(){
+  const doy=Math.floor((new Date()-new Date(new Date().getFullYear(),0,0))/864e5);
+  const weak=new Set(CO().profile.weak||[]);
+  const pool=PROBLEMS.filter(p=>p.tags.some(t=>weak.has(t)));
+  const p=(pool.length?pool:PROBLEMS)[doy%(pool.length||PROBLEMS.length)];
+  const tip=p.tips[doy%p.tips.length];
+  return {t:tip.t,d:tip.d,pid:p.id,drill:true};
+}
+// ---------- TACTICS LIBRARY ----------
+let TACT_OPEN=null;
+function renderTactics(){
+  const el=document.getElementById("sub-tactics");
+  if(!el)return;
+  const weak=new Set(CO().profile.weak||[]);
+  const sorted=[...TACTICS].sort((a,b)=>(b.tags.some(t=>weak.has(t))?1:0)-(a.tags.some(t=>weak.has(t))?1:0));
+  el.innerHTML=`<div class="card"><div class="label">Fight IQ</div>
+  <div class="muted" style="margin-bottom:12px">Short reads, ordered for your style. The ones matching your weaknesses are first.</div>
+  ${sorted.map(t=>`<div class="tact ${TACT_OPEN===t.id?"open":""}">
+    <div class="tacthead" onclick="TACT_OPEN=TACT_OPEN==='${t.id}'?null:'${t.id}';renderTactics()">
+      <div class="tactt">${t.title}${t.tags.some(x=>weak.has(x))?' <span class="anstag">for you</span>':""}</div><span class="caret">▶</span></div>
+    <div class="tactbody"><div class="tactinner">${t.body.split("\\n\\n").map(par=>`<p>${par}</p>`).join("")}</div></div>
+  </div>`).join("")}</div>`;
+}
+// ---------- DRILL LIBRARY ----------
+let DRILL_FILTER="all";
+function renderDrillLib(){
+  const el=document.getElementById("sub-drills");
+  if(!el)return;
+  const cats=[["all","All"],["counter_jab","Jab counters"],["slip","Slipping"],["get_inside","Getting inside"],
+    ["get_countered","Not getting countered"],["body_work","Body work"],["reaction","Reaction"],["conditioning","Conditioning"]];
+  const list=DRILLS.filter(d=>DRILL_FILTER==="all"||d.tags.includes(DRILL_FILTER))
+    .sort((a,b)=>(gearOK(b)?1:0)-(gearOK(a)?1:0));
+  el.innerHTML=`<div class="card"><div class="label">Drill library · ${DRILLS.length} drills</div>
+  <div class="chips scroll" style="margin-bottom:14px">${cats.map(([k,n])=>`<div class="chip ${DRILL_FILTER===k?"on":""}" onclick="DRILL_FILTER='${k}';renderDrillLib()">${n}</div>`).join("")}</div>
+  ${list.map(d=>drillCardHTML(d,"lib")).join("")||'<div class="dim">Nothing matches that filter.</div>'}</div>`;
+}
+
+// ---------- DEBRIEF ----------
+const DEBRIEF_Q=[
+ {k:"issues",q:"What kept happening to you?",multi:true,
+  opts:[["p_eat_jab","Getting jabbed on the way in"],["p_countered","Getting countered after I punched"],
+        ["p_slow_slip","Too slow to see shots coming"],["p_inside","Couldn't get inside / stay inside"],
+        ["p_gas","Faded late"],["p_predictable","They started reading me"],["p_nerves","Froze / tensed up"]]},
+ {k:"worked",q:"What actually worked?",multi:true,
+  opts:[["body","Body work"],["jab","My jab"],["counter","Counters"],["pressure","Pressure / walking them down"],
+        ["angles","Angles and pivots"],["nothing","Honestly, not much"]]},
+ {k:"opp",q:"What were you up against?",multi:false,
+  opts:[["taller","Taller / longer"],["southpaw","Southpaw"],["rusher","Rusher / pressure fighter"],
+        ["boxer","Slick mover / boxer"],["similar","Similar size and style"]]},
+ {k:"rounds",q:"How much did you spar?",multi:false,
+  opts:[["1","1-2 rounds"],["3","3-4 rounds"],["5","5+ rounds"]]},
+ {k:"felt",q:"How did it feel overall?",multi:false,
+  opts:[["good","Sharp — better than last time"],["ok","About the same"],["bad","Rough — got outworked"]]},
+];
+let DEBRIEF_STATE=null;
+function startDebrief(){ DEBRIEF_STATE={step:0,ans:{}}; nextDebrief(); }
+function nextDebrief(){
+  if(!DEBRIEF_STATE)return;
+  const q=DEBRIEF_Q[DEBRIEF_STATE.step];
+  if(!q){ finishDebrief(); return; }
+  modalChoice({
+    title:q.q,
+    sub:"Step "+(DEBRIEF_STATE.step+1)+" of "+DEBRIEF_Q.length,
+    single:!q.multi,
+    options:q.opts.map(([v,t])=>({v,t})),
+    onDone:sel=>{
+      DEBRIEF_STATE.ans[q.k]=sel;
+      DEBRIEF_STATE.step++;
+      setTimeout(nextDebrief,180);
+    }
+  });
+}
+function finishDebrief(){
+  const a=DEBRIEF_STATE.ans;
+  const rec={date:today(),issues:a.issues||[],worked:a.worked||[],opp:(a.opp||[])[0]||"",
+    rounds:(a.rounds||[])[0]||"",felt:(a.felt||[])[0]||""};
+  CO().debriefs.unshift(rec);
+  CO().debriefs=CO().debriefs.slice(0,60);
+  save();
+  DEBRIEF_STATE=null;
+  renderDebrief();
+  const top=(rec.issues||[])[0];
+  if(top){
+    setTimeout(()=>{
+      if(confirm("Debrief saved. Build a 2-week plan for your top issue?"))proposePlan(top);
+    },260);
+  }else toast("Debrief saved ✓","#16a34a");
+}
+function debriefStreakRead(){
+  const recent=CO().debriefs.slice(0,4);
+  if(recent.length<2)return null;
+  const counts={};
+  for(const d of recent)for(const t of (d.issues||[]))counts[t]=(counts[t]||0)+1;
+  const worst=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];
+  if(!worst||worst[1]<2)return null;
+  const p=PROBLEMS.find(x=>x.id===worst[0]);
+  return p?{pid:p.id,txt:'"'+p.title+'" has come up in '+worst[1]+" of your last "+recent.length+" sessions. That's not a bad day, that's a hole in your game."}:null;
+}
+function renderDebrief(){
+  const el=document.getElementById("sub-debrief");
+  if(!el)return;
+  const list=CO().debriefs.slice(0,10);
+  const rep=debriefStreakRead();
+  const LBL={taller:"Taller",southpaw:"Southpaw",rusher:"Rusher",boxer:"Slick boxer",similar:"Similar",
+    good:"Sharp",ok:"Same",bad:"Rough",body:"Body work",jab:"Jab",counter:"Counters",pressure:"Pressure",angles:"Angles",nothing:"Not much"};
+  el.innerHTML=`<div class="card"><div class="label">Post-spar debrief</div>
+  <div class="muted" style="margin-bottom:12px">Five taps right after sparring, while it's fresh. The coach uses these to spot problems that keep repeating.</div>
+  <button class="primary" style="width:100%" onclick="startDebrief()">Start debrief</button></div>
+  ${rep?`<div class="card alert"><div class="label">Repeating problem</div><div style="font-size:14px">${rep.txt}</div>
+    <button class="sm primary" style="margin-top:10px" onclick="proposePlan('${rep.pid}')">Build a plan for it</button></div>`:""}
+  <div class="card"><div class="label">History</div>
+  ${list.length?list.map(d=>`<div class="dbrow">
+    <div><div class="readt">${d.date} · ${LBL[d.opp]||"—"} · ${d.rounds||"?"} rounds</div>
+    <div class="dim">${(d.issues||[]).map(i=>{const p=PROBLEMS.find(x=>x.id===i);return p?p.title:i}).join(" · ")||"nothing flagged"}</div>
+    <div class="dim">Worked: ${(d.worked||[]).map(w=>LBL[w]||w).join(", ")||"—"}</div></div>
+    <span class="feltdot ${d.felt}">${d.felt==="good"?"▲":d.felt==="bad"?"▼":"="}</span>
+  </div>`).join(""):'<div class="dim">No debriefs yet.</div>'}</div>`;
+}
+// ---------- OPPONENTS ----------
+const OPP_STYLES=[["taller","Taller / longer reach"],["southpaw","Southpaw"],["rusher","Rusher / pressure"],
+  ["boxer","Slick mover / boxer"],["counter","Counter puncher"],["similar","Similar size and style"]];
+const OPP_PLAN={
+  taller:{pid:"p_taller",plan:["Two ranges only — way out, or all the way in. Never sit in the middle.","Punish every jab: slip outside + right hand over, or parry + lead hook.","Body first once you're inside. Bring the hands down before you go upstairs.","Cut the ring, don't chase. Trap them on the ropes and stay there."]},
+  southpaw:{pid:"p_southpaw",plan:["Win the outside foot position — lead foot outside theirs.","Straight right down the middle is your money punch.","Circle to your left, away from their power hand.","Lead hook to the body — it's wide open in open stance."]},
+  rusher:{pid:"p_pressure_rusher",plan:["Pivot off the lead foot, never back up in a straight line.","Meet them as they step in — a punch on an advancing head does double damage.","Uppercut when they duck their head in.","Clinch early rather than trading in a bad spot."]},
+  boxer:{pid:"p_inside",plan:["Cut the ring, take their escape lanes — don't follow them around.","Feint constantly so your entries don't arrive on a rhythm.","Get to the body and make them fight, not box.","Stay on them after exchanges — pivot, don't exit."]},
+  counter:{pid:"p_countered",plan:["Shorten combinations to 2-3 and exit on an angle every time.","Feint first to draw the counter, then enter behind it.","Never finish a combo standing where you started.","Return every hand faster than you threw it."]},
+  similar:{pid:"p_predictable",plan:["Whoever changes rhythm first wins this one.","Body work breaks the tie in even matchups.","Win the jab exchange — catch and return, and gain a step every time.","Take the centre and make them move."]}
+};
+function addOpponent(){
+  const n=prompt("Who? (name or nickname)");if(!n)return;
+  modalChoice({title:"What are they like?",sub:n,single:true,
+    options:OPP_STYLES.map(([v,t])=>({v,t})),
+    onDone:sel=>{
+      const style=sel[0]||"similar";
+      const notes=prompt("What beat you last time? (optional)")||"";
+      CO().opponents.push({id:"o"+Date.now(),n,style,notes,log:[],added:today()});
+      save();renderOpponents();
+      toast("Opponent saved — game plan ready ✓","#16a34a");
+    }});
+}
+function delOpponent(id){
+  if(!confirm("Delete this opponent profile?"))return;
+  CO().opponents=CO().opponents.filter(o=>o.id!==id);save();renderOpponents();
+}
+function noteOpponent(id){
+  const o=CO().opponents.find(x=>x.id===id);if(!o)return;
+  const t=prompt("Add a note from the last time you faced them:");if(!t)return;
+  o.log.unshift({date:today(),t});save();renderOpponents();
+}
+function renderOpponents(){
+  const el=document.getElementById("sub-opponents");
+  if(!el)return;
+  const list=CO().opponents;
+  el.innerHTML=`<div class="card"><div class="label">Sparring partners</div>
+  <div class="muted" style="margin-bottom:12px">Log who you spar and get a game plan built for their style before you face them again.</div>
+  <button class="primary" style="width:100%" onclick="addOpponent()">+ Add an opponent</button></div>
+  ${list.map(o=>{
+    const st=OPP_STYLES.find(s=>s[0]===o.style);
+    const gp=OPP_PLAN[o.style]||OPP_PLAN.similar;
+    return `<div class="card"><div class="gtop"><div><div class="gname">${o.n}</div>
+      <div class="dim">${st?st[1]:o.style}</div></div>
+      <button class="sm ghost danger" onclick="delOpponent('${o.id}')">✕</button></div>
+      ${o.notes?`<div class="oppnote">Last time: ${o.notes}</div>`:""}
+      <div class="label" style="margin:14px 0 8px">Game plan</div>
+      ${gp.plan.map((p,i)=>`<div class="tip open"><div class="tipn">${i+1}</div><div class="tipbody"><div class="tipt">${p}</div></div></div>`).join("")}
+      <div class="controls" style="margin-top:12px">
+        <button class="sm" onclick="askTopic('${gp.pid}')">Drills for this style</button>
+        <button class="sm ghost" onclick="noteOpponent('${o.id}')">+ Note</button>
+      </div>
+      ${o.log.length?`<div class="label" style="margin:14px 0 6px">Notes</div>${o.log.map(l=>`<div class="meal-row"><span>${l.t}</span><span class="dim">${l.date.slice(5)}</span></div>`).join("")}`:""}
+    </div>`}).join("")}`;
+}
+
+// ---------- REACTION TRAINER ----------
+let RX={mode:"slip",running:false,state:"idle",t0:0,times:[],round:0,total:10,timer:null,expect:null,best:null};
+const COUNTER_MAP=[
+  {in:"1",inName:"Jab",good:["slip+2","catch+1","parry+3"],label:{"slip+2":"Slip outside → right hand","catch+1":"Catch → jab back","parry+3":"Parry → lead hook"}},
+  {in:"2",inName:"Cross",good:["roll+3","slip+2"],label:{"roll+3":"Roll under → lead hook","slip+2":"Slip inside → right hand"}},
+  {in:"3",inName:"Lead hook",good:["block+2","duck+3"],label:{"block+2":"Block → right hand","duck+3":"Duck → lead hook"}},
+  {in:"body",inName:"Body shot",good:["elbow+1","step+2"],label:{"elbow+1":"Elbow down → jab","step+2":"Step out → right hand"}},
+];
+function rxStart(mode){
+  RX.mode=mode||RX.mode;RX.running=true;RX.times=[];RX.round=0;RX.state="wait";
+  initAudio();
+  renderReaction();
+  rxNext();
+}
+function rxStop(){
+  RX.running=false;RX.state="idle";clearTimeout(RX.timer);
+  if(RX.times.length>=3){
+    const avg=Math.round(RX.times.reduce((a,b)=>a+b,0)/RX.times.length);
+    CO().reaction.unshift({date:today(),mode:RX.mode,avg,best:Math.min(...RX.times),n:RX.times.length});
+    CO().reaction=CO().reaction.slice(0,60);
+    save();
+  }
+  renderReaction();
+}
+function rxNext(){
+  if(!RX.running)return;
+  if(RX.round>=RX.total){ rxStop(); return; }
+  RX.state="wait";RX.expect=null;
+  renderReactionLive();
+  const delay=900+Math.random()*2200;
+  RX.timer=setTimeout(()=>{
+    if(!RX.running)return;
+    RX.state="go";RX.t0=performance.now();
+    if(RX.mode==="slip")RX.expect=Math.random()<0.5?"L":"R";
+    else{ const c=COUNTER_MAP[Math.floor(Math.random()*COUNTER_MAP.length)]; RX.expect=c; }
+    beep(880,0.06,0,0.25);
+    renderReactionLive();
+    RX.timer=setTimeout(()=>{ if(RX.running&&RX.state==="go"){ RX.state="miss"; renderReactionLive(); setTimeout(()=>{RX.round++;rxNext()},700); } },1800);
+  },delay);
+}
+function rxHit(ans){
+  if(!RX.running)return;
+  if(RX.state==="wait"){ RX.state="early"; clearTimeout(RX.timer); renderReactionLive(); setTimeout(()=>rxNext(),800); return; }
+  if(RX.state!=="go")return;
+  clearTimeout(RX.timer);
+  const dt=Math.round(performance.now()-RX.t0);
+  let ok;
+  if(RX.mode==="slip")ok=(ans===RX.expect);
+  else ok=RX.expect.good.includes(ans);
+  if(ok){ RX.times.push(dt); RX.state="hit"; RX.lastMs=dt; beep(1200,0.05,0,0.2); }
+  else { RX.state="wrong"; beep(220,0.12,0,0.25); }
+  RX.round++;
+  renderReactionLive();
+  setTimeout(()=>rxNext(),650);
+}
+function renderReactionLive(){
+  const box=document.getElementById("rxStage");
+  if(!box)return;
+  const cls={wait:"rxwait",go:"rxgo",hit:"rxhit",wrong:"rxwrong",miss:"rxmiss",early:"rxearly",idle:""}[RX.state]||"";
+  let inner="";
+  if(RX.state==="wait")inner=`<div class="rxbig">…</div><div class="rxsub">wait for it</div>`;
+  else if(RX.state==="go"&&RX.mode==="slip")inner=`<div class="rxbig">${RX.expect==="L"?"◀ SLIP LEFT":"SLIP RIGHT ▶"}</div><div class="rxsub">move your head and tap that side</div>`;
+  else if(RX.state==="go")inner=`<div class="rxbig">${RX.expect.inName}</div><div class="rxsub">tap the right counter</div>`;
+  else if(RX.state==="hit")inner=`<div class="rxbig">${RX.lastMs} ms</div><div class="rxsub">good</div>`;
+  else if(RX.state==="wrong")inner=`<div class="rxbig">✗</div><div class="rxsub">wrong answer</div>`;
+  else if(RX.state==="miss")inner=`<div class="rxbig">too slow</div><div class="rxsub">it was there for 1.8s</div>`;
+  else if(RX.state==="early")inner=`<div class="rxbig">too early</div><div class="rxsub">react, don't guess</div>`;
+  else inner=`<div class="rxbig">ready</div>`;
+  box.className="rxstage "+cls;
+  box.innerHTML=inner;
+  const prog=document.getElementById("rxProg");
+  if(prog)prog.textContent=Math.min(RX.round,RX.total)+" / "+RX.total;
+  const btns=document.getElementById("rxButtons");
+  if(btns&&RX.mode==="counter"&&RX.state==="go"){
+    const opts=[...RX.expect.good,"none+1","block+cover"].slice(0,4);
+    btns.innerHTML=opts.sort(()=>Math.random()-0.5).map(o=>`<button class="rxbtn" onclick="rxHit('${o}')">${RX.expect.label[o]||"Cover up"}</button>`).join("");
+  }
+}
+function renderReaction(){
+  const el=document.getElementById("sub-reaction");
+  if(!el)return;
+  const hist=CO().reaction.filter(r=>r.mode===RX.mode);
+  const best=hist.length?Math.min(...hist.map(r=>r.best)):null;
+  const avg=hist.length?Math.round(hist.slice(0,5).reduce((a,b)=>a+b.avg,0)/Math.min(5,hist.length)):null;
+  el.innerHTML=`<div class="card">
+    <div class="label">Reaction trainer</div>
+    <div class="chips" style="margin-bottom:12px">
+      <div class="chip ${RX.mode==="slip"?"on":""}" onclick="RX.mode='slip';rxStop();renderReaction()">Slip trainer</div>
+      <div class="chip ${RX.mode==="counter"?"on":""}" onclick="RX.mode='counter';rxStop();renderReaction()">Counter trainer</div>
+    </div>
+    <div class="muted" style="margin-bottom:12px">${RX.mode==="slip"
+      ?"Hold the phone in your guard. When it says SLIP LEFT or SLIP RIGHT, physically slip that way and tap that side of the screen. Move your head, not just your thumb — that's the whole point."
+      :"A punch comes at you. Tap the correct counter for it. This trains the decision, which is the slow part in real sparring."}</div>
+    <div class="rxstage" id="rxStage"><div class="rxbig">ready</div></div>
+    ${RX.mode==="slip"?`<div class="rxsides">
+      <button class="rxside" onclick="rxHit('L')">◀ LEFT</button>
+      <button class="rxside" onclick="rxHit('R')">RIGHT ▶</button></div>`
+      :`<div class="rxbtns" id="rxButtons"><span class="dim">Counters appear when a punch comes.</span></div>`}
+    <div class="controls" style="margin-top:14px;justify-content:center">
+      ${RX.running?`<button onclick="rxStop()">Stop</button>`:`<button class="primary" onclick="rxStart('${RX.mode}')">Start ${RX.total} reps</button>`}
+      <span class="dim" id="rxProg">${Math.min(RX.round,RX.total)} / ${RX.total}</span>
+    </div>
+    ${RX.times.length?`<div class="dim" style="margin-top:10px;text-align:center">This set: avg ${Math.round(RX.times.reduce((a,b)=>a+b,0)/RX.times.length)} ms · best ${Math.min(...RX.times)} ms</div>`:""}
+  </div>
+  <div class="card"><div class="label">Your reaction times</div>
+    <div class="statgrid">
+      <div class="statpill"><b>${best??"–"}</b><span>best ms</span></div>
+      <div class="statpill"><b>${avg??"–"}</b><span>recent avg</span></div>
+      <div class="statpill"><b>${hist.length}</b><span>sets done</span></div>
+    </div>
+    ${hist.length>1?`<div style="margin-top:14px">${sparkline(hist.slice(0,12).map(r=>-r.avg),300,50)}</div>
+    <div class="dim" style="margin-top:6px">Line going up = getting faster.</div>`:""}
+    <div class="dim" style="margin-top:10px">Typical trained fighter reaction to a visual cue is 200-280 ms. Under 200 is fast. This measures recognition, which is the part that actually improves with work.</div>
+    ${hist.length?`<div style="margin-top:12px">${hist.slice(0,8).map(r=>`<div class="meal-row"><span>${r.date} · ${r.mode}</span><b>${r.avg} ms avg · ${r.best} best</b></div>`).join("")}</div>`:""}
+  </div>`;
+  renderReactionLive();
+}
+
+
 // ================= WIDGET MODE =================
 const WIDGETS=[
   {id:"today",n:"Today",d:"Focus + habits + streak"},
@@ -3658,7 +4287,7 @@ function renderWidgetView(which){
 
 // ================= TABS / INIT =================
 const safe=f=>{ try{if(typeof f==="function")f();}catch(e){console.error("render error:",e);} };
-const SUBMAP={train:["workout","timer","combos","prs","rounds","plan"],progress:["analytics","overview","review","journal","sleep"],more:["morning","reminders","setup","widgets","settings"]};
+const SUBMAP={coach:["ask","drills","reaction","debrief","opponents","tactics"],train:["workout","timer","combos","prs","rounds","plan"],progress:["analytics","overview","review","journal","sleep"],more:["morning","reminders","setup","widgets","settings"]};
 function subTab(view,sub){
   for(const s of SUBMAP[view]){
     const el=document.getElementById("sub-"+s);
@@ -3667,7 +4296,8 @@ function subTab(view,sub){
   document.querySelectorAll(`#view-${view} .chip[data-sub]`).forEach(c=>c.classList.toggle("on",c.dataset.sub===sub));
   const rmap={workout:()=>renderWorkout(false),timer:()=>renderTimer(),combos:renderCombos,prs:renderPRs,plan:renderPlan,rounds:renderRounds,
     analytics:renderAnalytics,overview:renderOverview,review:renderReview,journal:renderJournal,sleep:renderSleep,
-    morning:renderMorning,reminders:renderReminders,setup:renderSetup,widgets:renderWidgets,settings:renderSettings};
+    morning:renderMorning,reminders:renderReminders,setup:renderSetup,widgets:renderWidgets,settings:renderSettings,
+    ask:renderCoach,drills:renderDrillLib,reaction:renderReaction,debrief:renderDebrief,opponents:renderOpponents,tactics:renderTactics};
   safe(rmap[sub]);
 }
 function goTab(t){const b=document.querySelector(`#bottomNav button[data-tab=${t}]`);if(b)b.click();}
@@ -3709,26 +4339,63 @@ if(isWidget){
     if(tab==="goals")safe(renderGoals);
     if(tab==="schedule")safe(renderSchedule);
     if(tab==="fuel")safe(renderFood);
+    if(tab==="coach")safe(renderCoach);
     window.scrollTo({top:0});
   });
   SCHED_DAY=today();
   renderHome();renderGoals();renderSchedule();renderFood();
   subTab("train","workout");
+  subTab("coach","ask");
   subTab("progress","analytics");
   subTab("more","morning");
   updateOfflineBanner();
   __day=today();
 }
-window.addEventListener("error",e=>{
-  // Cross-origin scripts report as a bare "Script error." with no file or
-  // line. Nothing actionable in it, and it fires for third-party noise, so
-  // it is not worth interrupting the user.
-  const m=e.message||"";
-  if(!m||/^script error/i.test(m))return;
-  if(!e.filename&&!e.lineno)return;
-  toast("⚠ App error: "+m+" — screenshot this and report it");
-});
+// ================= UPDATE / OFFLINE (hosted version only) =================
+const APP_VERSION="2026.08.04.2323";
+let __swReg=null,__updateReady=false;
+function showUpdateBar(){
+  if(document.getElementById("updateBar"))return;
+  const b=document.createElement("div");
+  b.id="updateBar";b.className="updatebar";
+  b.innerHTML=`<span>New version of titan is ready.</span><button onclick="applyUpdate()">Update now</button>`;
+  document.body.appendChild(b);
+}
+function applyUpdate(){
+  try{
+    if(__swReg&&__swReg.waiting)__swReg.waiting.postMessage({type:"SKIP_WAITING"});
+    setTimeout(()=>location.reload(),320);
+  }catch(e){location.reload()}
+}
+function checkForUpdate(manual){
+  if(!__swReg){ if(manual)toast("Updates only work on the hosted version (github.io), not a downloaded file.","#92400e"); return; }
+  __swReg.update().then(()=>{ if(manual&&!__updateReady)toast("You're on the latest version ✓","#16a34a"); })
+    .catch(()=>{ if(manual)toast("Couldn't check — no internet.","#92400e") });
+}
+if("serviceWorker" in navigator && location.protocol.startsWith("http")){
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker.register("sw.js").then(reg=>{
+      __swReg=reg;
+      if(reg.waiting){__updateReady=true;showUpdateBar()}
+      reg.addEventListener("updatefound",()=>{
+        const nw=reg.installing;
+        if(!nw)return;
+        nw.addEventListener("statechange",()=>{
+          if(nw.state==="installed"&&navigator.serviceWorker.controller){__updateReady=true;showUpdateBar()}
+        });
+      });
+      setInterval(()=>reg.update().catch(()=>{}),60*60*1000);
+    }).catch(()=>{});
+    let refreshing=false;
+    navigator.serviceWorker.addEventListener("controllerchange",()=>{
+      if(refreshing)return;refreshing=true;location.reload();
+    });
+  });
+  document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible")checkForUpdate(false); });
+}
+window.addEventListener("error",e=>toast("⚠ App error: "+e.message+" — screenshot this and report it"));
 window.addEventListener("unhandledrejection",e=>toast("⚠ App error: "+(e.reason&&e.reason.message||e.reason)));
+window.__coach={PROBLEMS,DRILLS,TACTICS,askCoach,tipsFor,drillsFor,buildPlan,dataReads,coachDrillStats,shotOfDay,get RX(){return RX},set rxMode(v){RX.mode=v},rxStart,rxStop,rxHit,startDebrief,setDrillFilter(v){DRILL_FILTER=v;renderDrillLib()},gearOK,scoreProblem};
 window.__camp={get D(){return D},save,today,streaks,focusScoreFor,levelInfo,habitDue,habitDone,meterSet,analytics,goalPacing,suggestSteps,gainsSnapshot,toast,isWidget,EVENT,get TMR(){return TMR},tmrStart,tmrPause,tmrReset,exportICS};
 </script>
 <script type="module">
@@ -4555,29 +5222,16 @@ async function loadModel(variant){
   state.model=variant;
   el('modelBadge').textContent=`Model: ${variant} ✓`;
 }
-// Device-aware defaults. Heavy + 30fps on a phone reliably kills the tab (OOM
-// or watchdog). Desktop keeps max accuracy; phones get a profile that finishes.
-(function pickDefaults(){
-  const lowRam=(navigator.deviceMemory||4)<=4, fewCores=(navigator.hardwareConcurrency||4)<=4;
-  if(isMobile||lowRam){
-    el('modelSel').value = (lowRam&&fewCores)?'lite':'full';
-    el('fpsSel').value   = '15';
-  }else{
-    el('modelSel').value='heavy';
-  }
-})();
+el('modelSel').value='heavy'; // max-accuracy default (user's call) — switch to Full/Lite if analysis crawls
 let modelKicked=false;
-function ensureModel(){
-  /* DISABLED. The Spar tab is Claude-driven now, so the MediaPipe pose model
-     is never used. Loading it anyway cost a ~30MB download on every visit,
-     often over cell data, for nothing. The engine below is left in place but
-     dormant; this is the one call site that used to wake it. */
-  return;
+function ensureModel(){ // lazy: don't burn data/CPU loading the pose model until Spar is actually used
+  if(modelKicked)return;modelKicked=true;
+  loadModel(el('modelSel').value).catch(e=>{el('modelBadge').textContent='Model failed — check internet';modelKicked=false;console.error(e)});
 }
 const sparNavBtn=document.querySelector('#bottomNav button[data-tab=spar]');
 if(sparNavBtn)sparNavBtn.addEventListener('click',ensureModel);
 if(document.getElementById('view-spar').classList.contains('on'))ensureModel();
-/* pose model selector removed from UI; no-op */
+el('modelSel').onchange=e=>{modelKicked=true;loadModel(e.target.value).catch(err=>alert('Model load failed: '+err.message))};
 
 /* ================= FILE LOAD ================= */
 el('dropHint').onclick=()=>el('fileInput').click();
@@ -4624,20 +5278,7 @@ async function runAnalysis(){
   busy=true;cancelFlag=false;
   state.scanFps=parseInt(el('fpsSel').value);
   state.frames=[];
-  state.decodeFails=0; state.tsRejects=0; state.lastTs=-1;
   video.pause();
-  // ---- FRAME BUDGET ------------------------------------------------
-  // Each stored frame keeps 33 2-D points + 33 world points per fighter.
-  // ~4KB/frame with 2 poses. iOS Safari kills a tab near ~1GB, so cap the
-  // total and auto-thin the scan rate rather than crashing mid-analysis.
-  const MAXF = isMobile ? 5200 : 22000;
-  const wanted = Math.ceil((video.duration||0) * state.scanFps);
-  if(wanted > MAXF){
-    const newFps = Math.max(6, Math.floor(MAXF / Math.max(1, video.duration)));
-    toast('Long clip: dropping the scan to '+newFps+' fps so this device does not run out of memory. Trim the video for finer detail.', '#b45309');
-    state.scanFps = newFps;
-  }
-  state.frameCap = MAXF;
   el('progressWrap').style.display='block';el('analyzeBtn').disabled=true;
   const dur=video.duration,step=1/state.scanFps,t0=performance.now();
   const sampCan=document.createElement('canvas');
@@ -4645,15 +5286,8 @@ async function runAnalysis(){
   const sctx=sampCan.getContext('2d',{willReadFrequently:true});
   let lastProg=0;
   const processFrame=(t,tsMs)=>{
-    if(state.frames.length>=state.frameCap){cancelFlag=true;return}
-    // MediaPipe VIDEO mode requires strictly increasing timestamps. rVFC can
-    // repeat a mediaTime on a stalled frame; without this every later frame
-    // throws and the scan silently returns nothing.
-    if(!(tsMs>state.lastTs)){tsMs=state.lastTs+1;state.tsRejects++}
-    state.lastTs=tsMs;
     let res;
-    try{res=landmarker.detectForVideo(video,tsMs)}catch(e){state.decodeFails++;return}
-    if(!res||!res.landmarks||!res.landmarks.length){state.decodeFails++}
+    try{res=landmarker.detectForVideo(video,tsMs)}catch(e){return}
     let img=null;
     try{sctx.drawImage(video,0,0,sampCan.width,sampCan.height);img=sctx.getImageData(0,0,sampCan.width,sampCan.height).data}catch(e){}
     const poses=(res.landmarks||[]).map((p,pi)=>{
@@ -4720,15 +5354,7 @@ async function runAnalysis(){
     }
   }
   el('progressWrap').style.display='none';el('analyzeBtn').disabled=false;busy=false;
-  if(state.frames.length<10){
-    let why='Only '+state.frames.length+' frames came back.';
-    if(state.decodeFails>5) why+=' The browser could not decode this file — iPhone .MOV clips are often HEVC, which Chrome and some Android browsers cannot read. Re-export as H.264 MP4, or open this page in Safari.';
-    else why+=' Try a shorter clip, or reload if the pose model badge is not showing a checkmark.';
-    toast(why,'#b91c1c');
-    renderStats();return;
-  }
-  if(cancelFlag){renderStats();return}
-  if(state.decodeFails>state.frames.length*0.25) toast('Heads up: '+state.decodeFails+' frames failed pose detection. Numbers below are shakier than usual — check the Tracking Quality panel.','#b45309');
+  if(cancelFlag||state.frames.length<10){renderStats();return}
   // frames may be captured slightly unevenly by rVFC — sort and dedupe by time
   state.frames.sort((a,b)=>a.t-b.t);
   rescore();
@@ -5280,619 +5906,5 @@ document.addEventListener('keydown',e=>{
 window.addEventListener('resize',()=>{if(video.duration)drawTimeline()});
 
 } // end widget-mode guard
-
-/* ==================================================================
-   v4 RUNTIME — boot splash, motion, Claude vision coach
-   ================================================================== */
-(function(){
-'use strict';
-if(document.body.classList.contains('widget-mode'))return;
-
-/* ---------------- BOOT SPLASH ---------------- */
-const splash=document.getElementById('bootSplash');
-if(splash){
-  const msg=document.getElementById('bootMsg');
-  const steps=['Reading your data','Rebuilding streaks','Drawing charts'];
-  let i=0, dead=false;
-  const tick=()=>{
-    if(dead||i>=steps.length)return;
-    const t=steps[i++];
-    if(msg){
-      msg.style.opacity=0;
-      setTimeout(()=>{if(!dead&&msg)msg.textContent=t,msg.style.opacity=1},180);
-    }
-    setTimeout(tick,420);
-  };
-  setTimeout(tick,180);
-  const finish=()=>{
-    dead=true;
-    if(msg){msg.style.opacity=0;setTimeout(()=>{if(msg)msg.textContent='Ready',msg.style.opacity=1},150)}
-    setTimeout(()=>{splash.classList.add('gone');document.body.classList.remove('booting')},480);
-    setTimeout(()=>{if(splash.parentNode)splash.parentNode.removeChild(splash)},1200);
-  };
-  // whichever lands first: real readiness, or a 2.2s ceiling so a slow
-  // render can never trap the user behind the splash
-  let done=false; const once=()=>{if(done)return;done=true;finish()};
-  if(document.readyState==='complete')setTimeout(once,850);
-  else window.addEventListener('load',()=>setTimeout(once,600));
-  setTimeout(once,2200);
-}
-
-/* ---------------- RIPPLE ---------------- */
-document.addEventListener('pointerdown',e=>{
-  const b=e.target.closest('button');
-  if(!b||b.disabled||b.closest('#bottomNav'))return;
-  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-  const r=b.getBoundingClientRect(), d=Math.max(r.width,r.height);
-  const s=document.createElement('span');
-  s.className='rippl';
-  s.style.cssText=`width:${d}px;height:${d}px;left:${e.clientX-r.left-d/2}px;top:${e.clientY-r.top-d/2}px`;
-  b.appendChild(s);
-  setTimeout(()=>s.remove(),580);
-},{passive:true});
-
-/* ---------------- HAPTIC-ish nav feedback ---------------- */
-document.querySelectorAll('#bottomNav button').forEach(b=>{
-  b.addEventListener('click',()=>{ if(navigator.vibrate)try{navigator.vibrate(8)}catch(e){} },{passive:true});
-});
-
-/* ---------------- COUNT-UP on big numbers ---------------- */
-const io2=('IntersectionObserver' in window)?new IntersectionObserver(entries=>{
-  entries.forEach(en=>{
-    if(!en.isIntersecting)return;
-    const el=en.target;
-    io2.unobserve(el);
-    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-    const raw=el.textContent.trim();
-    const m=raw.match(/^(-?[\d,]+(?:\.\d+)?)(.*)$/);
-    if(!m)return;
-    const target=parseFloat(m[1].replace(/,/g,'')), suffix=m[2]||'';
-    if(!isFinite(target)||Math.abs(target)>1e7)return;
-    const dec=(m[1].split('.')[1]||'').length, t0=performance.now(), dur=680;
-    const step=now=>{
-      const k=Math.min(1,(now-t0)/dur), e=1-Math.pow(1-k,3);
-      el.textContent=(target*e).toFixed(dec)+suffix;
-      if(k<1)requestAnimationFrame(step); else {el.textContent=m[1]+suffix;el.classList.add('numpop');}
-    };
-    requestAnimationFrame(step);
-  });
-},{threshold:.4}):null;
-function armCounters(){ if(!io2)return; document.querySelectorAll('.tabview.on .bignum').forEach(e=>io2.observe(e)); }
-document.querySelectorAll('#bottomNav button').forEach(b=>b.addEventListener('click',()=>setTimeout(armCounters,90)));
-setTimeout(armCounters,1200);
-
-/* ==================================================================
-   CLAUDE SPAR ENGINE
-   Pose estimation is gone from the UI. Everything visible in the Spar
-   tab is produced by one structured-JSON call to Claude over sampled
-   stills. Rationale: MediaPipe cannot hold two overlapping fighters or
-   hand speeds that blur at 30fps, so its numbers were confidently wrong.
-   ================================================================== */
-const $=id=>document.getElementById(id);
-if(!$('kRun'))return;
-
-const KEY_LS='anthKey_v1', SESS_LS='titanSpar_v3';
-
-/* Rates per million tokens, Aug 2026. Sonnet 5 is on intro pricing
-   ($2/$10) through Aug 31 2026, then $3/$15. */
-const RATES={
-  'claude-haiku-4-5-20251001':{in:1, out:5,  name:'Haiku 4.5'},
-  'claude-sonnet-5':          {in:2, out:10, name:'Sonnet 5'},
-  'claude-opus-5':            {in:5, out:25, name:'Opus 5'},
-  'claude-fable-5':           {in:10,out:50, name:'Fable 5'}
-};
-const IMG_W=768, TOK_PER_IMG=1350, OUT_TOK=3000;
-let LAST=null, LASTCLAUDE=null;
-
-const getKey=()=>{try{return localStorage.getItem(KEY_LS)||''}catch(e){return''}};
-const setKey=k=>{try{localStorage.setItem(KEY_LS,k)}catch(e){}};
-const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-
-/* ---------------- key modal: asked once, then never again ---------------- */
-function askKey(reason){
-  return new Promise(res=>{
-    const m=document.createElement('div');
-    m.className='kmodal';
-    m.innerHTML=
-      '<div class="box">'+
-      '<h3>Connect Claude</h3>'+
-      '<p>'+(reason||'Paste your Anthropic API key once. It is saved on this device only and never leaves it except to call api.anthropic.com. It is not in the app\u2019s source or the repo.')+'</p>'+
-      '<input type="password" id="kKeyIn" placeholder="sk-ant-..." autocomplete="off" spellcheck="false">'+
-      '<div class="acts"><button class="ghost" id="kKeyX">Cancel</button><button class="primary" id="kKeyOk">Save</button></div>'+
-      '<p style="margin:15px 0 0;font-size:11.5px">Set a spend limit in the Anthropic console. If you lose this phone, revoke the key there.</p>'+
-      '</div>';
-    document.body.appendChild(m);
-    const inp=m.querySelector('#kKeyIn');
-    inp.value=getKey(); setTimeout(()=>inp.focus(),120);
-    const close=v=>{m.remove();res(v)};
-    m.querySelector('#kKeyX').onclick=()=>close(null);
-    m.querySelector('#kKeyOk').onclick=()=>{
-      const v=inp.value.trim();
-      if(!v)return inp.focus();
-      setKey(v); close(v);
-    };
-    inp.onkeydown=e=>{if(e.key==='Enter')m.querySelector('#kKeyOk').click()};
-    m.onclick=e=>{if(e.target===m)close(null)};
-  });
-}
-$('kKeyBtn').onclick=()=>askKey('Update the key stored on this device.');
-
-/* ---------------- cost estimate ---------------- */
-// Auto frame count. Roughly one still every 5s of footage, floored at 8
-// (below that Claude has too little to read) and capped at 28 (past that
-// the extra frames mostly repeat and you are just paying more).
-function autoFrames(){
-  const d=$('video').duration;
-  if(!d||!isFinite(d))return 14;
-  return Math.max(8,Math.min(28,Math.round(d/5)));
-}
-function frameCount(){
-  const v=$('aiFrames').value;
-  return v==='auto'?autoFrames():parseInt(v);
-}
-function estCost(){
-  const r=RATES[$('aiModel').value], n=frameCount();
-  const c=((n*TOK_PER_IMG+1400)/1e6)*r.in+(OUT_TOK/1e6)*r.out;
-  $('aiCost').textContent='~$'+c.toFixed(3)+($('aiFrames').value==='auto'?' \u00b7 '+n+'f':'');
-  $('kModelBadge').textContent='Claude \u00b7 '+r.name;
-}
-$('aiModel').onchange=estCost; $('aiFrames').onchange=estCost; estCost();
-
-/* ---------------- playback + scrubbing ---------------- */
-const fmtT=x=>{x=Math.max(0,x|0);return (x/60|0)+':'+String(x%60).padStart(2,'0')};
-(function watchVideo(){
-  const v=$('video'), sk=$('kSeek');
-  let dragging=false;
-  v.addEventListener('loadedmetadata',()=>{
-    $('kRun').disabled=false; $('kCount').disabled=false;
-    sk.disabled=false; $('kDur').textContent=fmtT(v.duration);
-    estCost(); // auto frame count depends on duration
-  });
-  v.addEventListener('timeupdate',()=>{
-    if(dragging||!v.duration)return;
-    sk.value=Math.round(v.currentTime/v.duration*1000);
-    $('kNow').textContent=fmtT(v.currentTime);
-  });
-  const scrub=()=>{
-    if(!v.duration)return;
-    const t=sk.value/1000*v.duration;
-    $('kNow').textContent=fmtT(t);
-    v.currentTime=t;
-  };
-  sk.addEventListener('input',()=>{dragging=true;
-    if(v.duration)$('kNow').textContent=fmtT(sk.value/1000*v.duration);});
-  sk.addEventListener('change',()=>{scrub();dragging=false});
-  // pointerup covers touch drags on iOS where 'change' can lag
-  sk.addEventListener('pointerup',()=>{if(dragging){scrub();dragging=false}});
-})();
-
-/* ---------------- frame sampling ---------------- */
-function ready(v,ms){ // wait until the decoder can actually paint a frame
-  return new Promise(res=>{
-    if(v.readyState>=2)return res(true);
-    let done=false;
-    const ok=()=>{if(done)return;done=true;cleanup();res(true)};
-    const cleanup=()=>{
-      v.removeEventListener('loadeddata',ok);
-      v.removeEventListener('canplay',ok);
-      v.removeEventListener('seeked',ok);
-    };
-    v.addEventListener('loadeddata',ok);
-    v.addEventListener('canplay',ok);
-    v.addEventListener('seeked',ok);
-    setTimeout(()=>{if(!done){done=true;cleanup();res(v.readyState>=2)}},ms||6000);
-  });
-}
-
-function seekOnce(v,t,ms){
-  return new Promise(res=>{
-    let done=false;
-    const target=Math.max(0,Math.min(t,(v.duration||1)-0.06));
-    const finish=ok=>{
-      if(done)return; done=true;
-      v.removeEventListener('seeked',onSeek);
-      clearInterval(poll); clearTimeout(to);
-      res(ok);
-    };
-    const t0=Date.now();
-    const onSeek=()=>{ if(v.readyState>=2)finish(true); };
-    v.addEventListener('seeked',onSeek);
-    // Safari sometimes lands the seek without firing a usable 'seeked', so
-    // poll position as a backstop. readyState is preferred evidence, but
-    // after a grace period a matched position is accepted on its own --
-    // some decoders never advance readyState on a paused seek, and
-    // insisting on it turned working files into "corrupt" errors.
-    const poll=setInterval(()=>{
-      const at=Math.abs(v.currentTime-target)<0.35;
-      if(!at)return;
-      if(v.readyState>=2||Date.now()-t0>1200)finish(true);
-    },80);
-    const to=setTimeout(()=>finish(false),ms||7000);
-    try{v.currentTime=target}catch(e){finish(false)}
-  });
-}
-
-async function seekP(v,t){
-  // readiness is checked once per clip in grabFrames, not per seek
-  if(await seekOnce(v,t,7000))return;
-  // one retry, nudged off the exact timestamp: some encoders have no
-  // seek point precisely there and the decoder sits waiting forever
-  if(await seekOnce(v,Math.max(0,t+0.12),7000))return;
-  throw new Error('Could not seek to '+t.toFixed(1)+'s. Try a shorter clip, or re-export it as H.264 MP4 \u2014 variable-frame-rate phone recordings sometimes have no seek point there.');
-}
-
-async function grabFrames(n){
-  const v=$('video');
-  if(!v.duration||!isFinite(v.duration))throw new Error('Load a clip first.');
-  v.pause();
-  await ready(v,6000);   // once per clip, not once per frame
-  const c=document.createElement('canvas');
-  const k=Math.min(1,IMG_W/v.videoWidth);
-  c.width=Math.round(v.videoWidth*k); c.height=Math.round(v.videoHeight*k);
-  const ctx=c.getContext('2d');
-  const strip=$('aiStrip'); strip.innerHTML='';
-  // skip the first and last 5%: setup and walk-off carry no signal
-  const a=v.duration*0.05, b=v.duration*0.95, out=[];
-  for(let i=0;i<n;i++){
-    const t=a+(b-a)*(n===1?0.5:i/(n-1));
-    await seekP(v,t);
-    ctx.drawImage(v,0,0,c.width,c.height);
-    const url=c.toDataURL('image/jpeg',0.72);
-    if(url.length<2200)throw new Error('Frames came back blank. The browser plays the audio but cannot decode this video track \u2014 iPhone .MOV is usually HEVC. Re-export as H.264 MP4, or open this page in Safari.');
-    out.push({t,b64:url.split(',')[1]});
-    const img=new Image(); img.src=url; img.style.animationDelay=(i*0.03)+'s'; strip.appendChild(img);
-    $('kStatus').innerHTML='<span class="dim">Pulling frames \u2014 '+(i+1)+' of '+n+'</span>';
-  }
-  return out;
-}
-
-/* ---------------- prompt ---------------- */
-function buildPrompt(frames,solo,sport){
-  return 'These are '+frames.length+' stills sampled evenly, in order, from a single '+
-  (solo?'shadowboxing':'sparring')+' clip ('+sport+'). Same athlete'+(solo?'':'s')+' throughout.\n\n'+
-  'You are an experienced amateur boxing coach doing film review. Be blunt and specific. If the footage is too blurry, dark, or distant to judge something, say so in the quality note instead of inventing a read. Never fabricate punch counts \u2014 you are seeing stills, not continuous video.\n\n'+
-  'Reply with ONLY a JSON object. No markdown fences, no preamble.\n\n'+
-  '{\n'+
-  '  "quality": {"grade":"good|fair|poor","note":"one sentence on what is and is not judgeable here"},\n'+
-  '  "fighters": {\n'+
-  '    "A": {"name":"short label","stance":"orthodox|southpaw|unclear","summary":"2-3 sentences",\n'+
-  '          "ratings":{"guard":0,"footwork":0,"handSpeed":0,"headMovement":0,"defense":0,"workRate":0}}'+
-  (solo?'\n':',\n    "B": {same shape}\n')+
-  '  },\n'+
-  (solo?'':'  "scorecard": {"A":10,"B":9,"winner":"A|B|draw","reason":"2 sentences on why"},\n')+
-  '  "rounds": [{"n":1,"read":"what happened in this stretch"}],\n'+
-  '  "moments": [{"t":12.4,"fighter":"A","kind":"good|flaw","label":"short title","note":"one sentence"}],\n'+
-  '  "fixes": {"A":[{"flaw":"...","why":"why it costs you in a real fight","drill":"one concrete drill"}]'+
-  (solo?'':',"B":[same]')+'},\n'+
-  '  "keep": {"A":"one thing they should not coach out"'+(solo?'':',"B":"same"')+'}\n'+
-  '}\n\n'+
-  'Ratings are 0-10 integers. Give exactly 3 fixes per fighter, hardest-hitting first. '+
-  'Give 3-6 moments with timestamps drawn from the frame times shown. '+
-  'Split "rounds" into 2-4 stretches based on what changes across the clip.'+
-  (solo?' Solo clip: only fighter A exists. Omit scorecard.':' Fighter A is on the left / red, B on the right / blue.');
-}
-
-/* ---------------- render ---------------- */
-function bar(label,v){
-  return '<div class="kbar"><span>'+esc(label)+'</span><div class="t"><i data-w="'+(v*10)+'"></i></div><b>'+v+'</b></div>';
-}
-function fighterCard(f,side){
-  const r=f.ratings||{};
-  return '<div class="kfc '+side+'"><h4>'+esc(f.name||('Fighter '+side.toUpperCase()))+'</h4>'+
-    '<div class="st">'+esc(f.stance||'stance unclear')+'</div>'+
-    '<p>'+esc(f.summary)+'</p><div class="kbars">'+
-    bar('Guard',r.guard|0)+bar('Footwork',r.footwork|0)+bar('Hand speed',r.handSpeed|0)+
-    bar('Head movement',r.headMovement|0)+bar('Defense',r.defense|0)+bar('Work rate',r.workRate|0)+
-    '</div></div>';
-}
-function fixBlock(list,who){
-  let h='';
-  (list||[]).forEach((f,i)=>{
-    h+='<div class="kfix"><h4><span class="n">'+(i+1)+'</span>'+esc(f.flaw)+'</h4>'+
-       '<div class="why">'+esc(f.why)+'</div><div class="drill">'+esc(f.drill)+'</div></div>';
-  });
-  return h;
-}
-
-function render(d,solo){
-  LAST=d; LASTCLAUDE=d;
-  const q=d.quality||{};
-  $('kStatus').innerHTML='<span class="dim"><b style="color:var(--'+
-    (q.grade==='good'?'good':q.grade==='poor'?'bad':'warn')+')">'+esc(q.grade||'fair').toUpperCase()+
-    ' footage</b> &middot; '+esc(q.note)+'</span>';
-
-  // scorecard
-  if(!solo&&d.scorecard){
-    const s=d.scorecard, A=d.fighters.A||{}, B=d.fighters.B||{};
-    $('kScorecard').innerHTML=
-      '<div class="kscore">'+
-      '<div class="side'+(s.winner==='A'?' win':'')+'"><div class="who">'+esc(A.name||'A')+'</div><div class="pts">'+(s.A|0)+'</div></div>'+
-      '<div class="vs">VS</div>'+
-      '<div class="side'+(s.winner==='B'?' win':'')+'"><div class="who">'+esc(B.name||'B')+'</div><div class="pts">'+(s.B|0)+'</div></div>'+
-      '</div><div class="kwhy">'+esc(s.reason)+'</div>';
-    $('cardScore').style.display='';
-  } else $('cardScore').style.display='none';
-
-  // fighters
-  let fh=fighterCard(d.fighters.A||{},'a');
-  if(!solo&&d.fighters.B)fh+=fighterCard(d.fighters.B,'b');
-  $('kFighters').innerHTML=fh;
-  $('cardFighters').style.display='';
-  setTimeout(()=>document.querySelectorAll('#kFighters .kbar .t i').forEach(i=>{i.style.width=i.dataset.w+'%'}),90);
-  drawRadar(d,solo);
-
-  // fixes
-  let xh='<div class="ksub">'+esc((d.fighters.A||{}).name||'Fighter A')+'</div>'+fixBlock(d.fixes&&d.fixes.A);
-  if(d.keep&&d.keep.A)xh+='<div class="kfix kkeep"><h4><span class="n">&#10003;</span>Keep doing this</h4><div class="why">'+esc(d.keep.A)+'</div></div>';
-  if(!solo&&d.fixes&&d.fixes.B){
-    xh+='<div class="ksub">'+esc((d.fighters.B||{}).name||'Fighter B')+'</div>'+fixBlock(d.fixes.B);
-    if(d.keep&&d.keep.B)xh+='<div class="kfix kkeep"><h4><span class="n">&#10003;</span>Keep doing this</h4><div class="why">'+esc(d.keep.B)+'</div></div>';
-  }
-  $('kFixes').innerHTML=xh; $('cardFixes').style.display='';
-
-  // moments
-  const mm=(d.moments||[]);
-  $('kMoments').innerHTML=mm.length?mm.map(m=>
-    '<div class="kmom '+(m.kind==='good'?'good':'flaw')+'" data-t="'+(+m.t||0)+'">'+
-    '<div class="tm">'+(+m.t||0).toFixed(1)+'s</div>'+
-    '<div class="tx"><b>'+esc(m.fighter||'')+' &middot; '+esc(m.kind||'')+'</b>'+
-    '<b style="display:inline;font-size:12.5px;color:var(--text);letter-spacing:0;text-transform:none">'+esc(m.label)+'</b> '+
-    esc(m.note)+'</div></div>').join(''):'<span class="dim">No moments flagged.</span>';
-  $('cardMoments').style.display='';
-  $('kMoments').querySelectorAll('.kmom').forEach(el2=>el2.onclick=()=>{
-    const v=$('video'); v.currentTime=Math.max(0,parseFloat(el2.dataset.t)-0.6); v.pause();
-    document.getElementById('videoWrap').scrollIntoView({behavior:'smooth',block:'center'});
-  });
-
-  // rounds
-  $('kRounds').innerHTML=(d.rounds||[]).map(r=>
-    '<div class="krd"><div class="rn">Stretch '+(r.n|0)+'</div><p>'+esc(r.read)+'</p></div>').join('')
-    ||'<span class="dim">Not enough footage to split.</span>';
-  $('cardRounds').style.display='';
-
-  $('kSave').disabled=false; $('kJson').disabled=false;
-}
-
-/* ---------------- radar ---------------- */
-let radarChart=null;
-function drawRadar(d,solo){
-  if(typeof Chart==='undefined')return;
-  const cv=$('kRadar'); if(!cv)return;
-  if(radarChart){radarChart.destroy();radarChart=null}
-  const labels=['Guard','Footwork','Hand speed','Head mvmt','Defense','Work rate'];
-  const keys=['guard','footwork','handSpeed','headMovement','defense','workRate'];
-  const ds=[];
-  const mk=(f,col)=>({label:f.name||'Fighter',data:keys.map(k=>(f.ratings||{})[k]|0),
-    borderColor:col,backgroundColor:col.replace('rgb','rgba').replace(')',',.16)'),
-    borderWidth:2,pointRadius:3,pointBackgroundColor:col});
-  if(d.fighters.A)ds.push(mk(d.fighters.A,'rgb(248,113,113)'));
-  if(!solo&&d.fighters.B)ds.push(mk(d.fighters.B,'rgb(96,165,250)'));
-  radarChart=new Chart(cv,{type:'radar',data:{labels,datasets:ds},options:{
-    responsive:true,maintainAspectRatio:false,
-    animation:{duration:900,easing:'easeOutQuart'},
-    plugins:{legend:{labels:{color:'#a4a4b2',font:{size:11,weight:'600'},boxWidth:12}}},
-    scales:{r:{min:0,max:10,ticks:{display:false,stepSize:2},
-      grid:{color:'rgba(255,255,255,.07)'},angleLines:{color:'rgba(255,255,255,.07)'},
-      pointLabels:{color:'#a4a4b2',font:{size:10.5,weight:'600'}}}}}});
-}
-
-/* ---------------- run ---------------- */
-$('kRun').onclick=async function(){
-  const btn=this;
-  let key=getKey();
-  if(!key){ key=await askKey(); if(!key)return; }
-  const model=$('aiModel').value;
-  btn.disabled=true; const lab=btn.textContent; btn.textContent='Analyzing\u2026';
-  try{
-    const frames=await grabFrames(frameCount());
-    const solo=$('modeSel').value==='shadow';
-    $('kStatus').innerHTML='<span class="thinking">'+RATES[model].name+' is watching <i></i><i></i><i></i></span>';
-    const content=[];
-    frames.forEach(f=>{
-      content.push({type:'text',text:'['+f.t.toFixed(1)+'s]'});
-      content.push({type:'image',source:{type:'base64',media_type:'image/jpeg',data:f.b64}});
-    });
-    content.push({type:'text',text:buildPrompt(frames,solo,$('sportSel').value)});
-
-    const r=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'content-type':'application/json','x-api-key':key,
-        'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model,max_tokens:OUT_TOK,messages:[{role:'user',content}]})
-    });
-    const data=await r.json();
-    if(!r.ok||data.error){
-      const msg=(data.error&&data.error.message)||('HTTP '+r.status);
-      if(r.status===401){
-        $('kStatus').innerHTML='<span class="warntext">Key rejected. Check it is correct and the account has credit.</span>';
-        const nk=await askKey('That key was rejected. Paste a working one.');
-        if(nk){btn.disabled=false;btn.textContent=lab;return btn.click()}
-      }
-      throw new Error(msg);
-    }
-    let txt=(data.content||[]).filter(x=>x.type==='text').map(x=>x.text).join('\n').trim();
-    txt=txt.replace(/^```(?:json)?/i,'').replace(/```$/,'').trim();
-    const s=txt.indexOf('{'), e=txt.lastIndexOf('}');
-    if(s<0||e<0)throw new Error('Claude did not return JSON. Try again, or a different model.');
-    const parsed=JSON.parse(txt.slice(s,e+1));
-    render(parsed,solo);
-
-    const u=data.usage||{}, rt=RATES[model];
-    if(u.input_tokens)$('aiCost').textContent='$'+((u.input_tokens/1e6)*rt.in+((u.output_tokens||0)/1e6)*rt.out).toFixed(3);
-  }catch(err){
-    $('kStatus').innerHTML='<span class="warntext">'+esc(err.message)+'</span>';
-  }finally{ btn.disabled=false; btn.textContent=lab; }
-};
-
-/* ---------------- save / progress ---------------- */
-const loadSess=()=>{try{return JSON.parse(localStorage.getItem(SESS_LS)||'[]')}catch(e){return[]}};
-const saveSess=a=>{try{localStorage.setItem(SESS_LS,JSON.stringify(a))}catch(e){}};
-
-$('kSave').onclick=()=>{
-  if(!LAST)return;
-  const a=loadSess();
-  const f=LAST.fighters.A||{};
-  a.push({date:new Date().toISOString(),mode:$('modeSel').value,
-    ratings:f.ratings||{},name:f.name||'A',
-    score:LAST.scorecard?LAST.scorecard.A:null});
-  saveSess(a); renderProg();
-  if(typeof toast==='function')toast('Session saved.','#15803d');
-};
-$('kJson').onclick=()=>{
-  if(!LAST)return;
-  const blob=new Blob([JSON.stringify(LAST,null,2)],{type:'application/json'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob); a.download='spar_'+new Date().toISOString().slice(0,10)+'.json';
-  a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),4000);
-};
-
-
-/* ==================================================================
-   ON-DEVICE PUNCH TALLY
-   The MediaPipe engine is genuinely bad at coaching judgement, but it
-   is the only thing here that can count, because counting needs every
-   frame and Claude only ever sees stills. So: Claude does the read,
-   this does the arithmetic. Crash bugs that used to kill it (frame
-   budget, non-monotonic timestamps, HEVC) are fixed above.
-   ================================================================== */
-function autoScanFps(dur){
-  // 30fps catches fast hands but doubles memory and time. Only spend it
-  // on short clips, and only where the device can take it.
-  const lowRam=(navigator.deviceMemory||4)<=4;
-  if(isMobile||lowRam)return dur<=45?15:10;
-  return dur<=90?30:15;
-}
-function autoVariant(dur){
-  const lowRam=(navigator.deviceMemory||4)<=4, fewCores=(navigator.hardwareConcurrency||4)<=4;
-  if(isMobile&&lowRam&&fewCores)return 'lite';
-  if(isMobile||lowRam)return 'full';
-  return dur<=90?'heavy':'full';
-}
-
-function tallyRow(label,a,b,solo,fmt){
-  const f=fmt||(x=>x==null?'\u2014':(typeof x==='number'?(Math.round(x*10)/10):x));
-  return '<div class="trow"><span class="tl">'+label+'</span>'+
-    '<b class="ta">'+f(a)+'</b>'+(solo?'':'<b class="tb">'+f(b)+'</b>')+'</div>';
-}
-
-function renderTally(core,solo){
-  const A=core.summary.A||{}, B=core.summary.B||{};
-  const q=core.quality||{};
-  const pct=x=>x==null?'\u2014':Math.round(x)+'%';
-  const nm=k=>{try{return (LASTCLAUDE&&LASTCLAUDE.fighters[k]&&LASTCLAUDE.fighters[k].name)||('Fighter '+k)}catch(e){return 'Fighter '+k}};
-
-  let h='<div class="thead"><span class="tl"></span><b class="ta">'+esc(nm('A'))+'</b>'+
-        (solo?'':'<b class="tb">'+esc(nm('B'))+'</b>')+'</div>';
-  h+=tallyRow('Total strikes',A.strikes,B.strikes,solo,x=>x==null?'\u2014':x);
-  h+=tallyRow('Landed',A.landed,B.landed,solo,x=>x==null?'\u2014':x);
-  h+=tallyRow('Blocked',A.blocked,B.blocked,solo,x=>x==null?'\u2014':x);
-  h+=tallyRow('Missed',A.missed,B.missed,solo,x=>x==null?'\u2014':x);
-  h+=tallyRow('Accuracy',A.accuracy,B.accuracy,solo,pct);
-  h+=tallyRow('Counters landed',A.counters,B.counters,solo,x=>x==null?'\u2014':x);
-  h+=tallyRow('Slips',A.slips,B.slips,solo,x=>x==null?'\u2014':x);
-  h+=tallyRow('Blocks made',A.blocks,B.blocks,solo,x=>x==null?'\u2014':x);
-  h+=tallyRow('Exchanges',A.exchanges,B.exchanges,solo,x=>x==null?'\u2014':x);
-  h+=tallyRow('Guard recovery',A.guardRec,B.guardRec,solo,x=>x==null?'\u2014':x.toFixed(1)+'s');
-  h+=tallyRow('Fade (work rate drop)',A.fatiguePct,B.fatiguePct,solo,pct);
-  $('kTally').innerHTML=h;
-
-  $('kTallyQ').textContent=(q.grade||'\u2014').toUpperCase()+' tracking';
-  $('kTallyQ').style.borderColor = q.grade==='good'?'rgba(74,222,128,.45)'
-    : q.grade==='poor'?'rgba(248,113,113,.45)':'rgba(251,191,36,.45)';
-
-  // round scorecard from the counter, shown alongside Claude's read
-  if(!solo&&core.scorecard&&core.scorecard.rows.length){
-    const sc=core.scorecard;
-    let r='<div class="ksub">Counted scorecard</div><div class="rdtable">';
-    sc.rows.forEach(x=>{
-      r+='<div class="rdrow"><span>Round '+x.n+'</span><b'+(x.a>x.b?' class="w"':'')+'>'+x.a+'</b><b'+(x.b>x.a?' class="w"':'')+'>'+x.b+'</b></div>';
-    });
-    r+='<div class="rdrow tot"><span>Total</span><b'+(sc.ta>sc.tb?' class="w"':'')+'>'+sc.ta+'</b><b'+(sc.tb>sc.ta?' class="w"':'')+'>'+sc.tb+'</b></div></div>';
-    $('kRoundCard').innerHTML=r;
-  } else $('kRoundCard').innerHTML='';
-
-  // momentum
-  if(typeof Chart!=='undefined'&&core.momentum&&core.momentum.length){
-    if(momChart)momChart.destroy();
-    momChart=new Chart($('kMomentum'),{type:'line',
-      data:{labels:core.momentum.map(p=>fmtT(p.t)),
-        datasets:[{label:'Landed differential',data:core.momentum.map(p=>p.v),
-          borderColor:'#a78bfa',backgroundColor:'rgba(167,139,250,.12)',fill:true,
-          tension:.35,borderWidth:2,pointRadius:0}]},
-      options:{responsive:true,maintainAspectRatio:false,
-        animation:{duration:800,easing:'easeOutQuart'},
-        plugins:{legend:{labels:{color:'#a4a4b2',font:{size:10},boxWidth:10}}},
-        scales:{y:{grid:{color:'rgba(255,255,255,.06)'},ticks:{color:'#5e5e6e',font:{size:10}}},
-                x:{grid:{display:false},ticks:{color:'#5e5e6e',font:{size:10},maxTicksLimit:6}}}}});
-  }
-  $('cardTally').style.display='';
-}
-
-let momChart=null;
-$('kCount').onclick=async function(){
-  const btn=this, v=$('video');
-  if(!v.duration)return;
-  btn.disabled=true; const lab=btn.textContent;
-  const st=$('kCountStatus');
-  try{
-    const dur=v.duration;
-    if(!landmarker){
-      btn.textContent='Loading tracker\u2026';
-      st.innerHTML='<span class="dim">First run downloads the tracking model (~10MB). Cached after this.</span>';
-      await loadModel(autoVariant(dur));
-    }
-    btn.textContent='Counting\u2026';
-    el('modelSel').value=autoVariant(dur);
-    el('fpsSel').value=String(autoScanFps(dur));
-    st.innerHTML='<span class="thinking">Scanning at '+autoScanFps(dur)+' fps <i></i><i></i><i></i></span>';
-
-    // suppress the legacy renderer: it paints into the hidden legacy rig
-    // and would fight Chart.js over zero-size canvases
-    const savedRender=renderAll;
-    renderAll=function(){};
-    const poll=setInterval(()=>{
-      if(state.frames&&state.frames.length)
-        st.innerHTML='<span class="dim">Scanning \u2014 '+state.frames.length+' frames</span>';
-    },400);
-    try{ await runAnalysis(); } finally { clearInterval(poll); renderAll=savedRender; }
-
-    if(!state.core){
-      st.innerHTML='<span class="warntext">Tracking found nothing usable in this clip. Claude\u2019s read above still applies.</span>';
-      return;
-    }
-    st.innerHTML='';
-    renderTally(state.core,$('modeSel').value==='shadow');
-    $('cardTally').scrollIntoView({behavior:'smooth',block:'start'});
-  }catch(err){
-    st.innerHTML='<span class="warntext">'+esc(err.message)+'</span>';
-  }finally{ btn.disabled=false; btn.textContent=lab; }
-};
-
-let progChart=null;
-function renderProg(){
-  const a=loadSess();
-  $('kSessList').innerHTML=a.length
-    ? a.slice(-6).reverse().map(s=>'<div class="kmom" style="cursor:default"><div class="tm">'+
-        s.date.slice(5,10)+'</div><div class="tx">'+esc(s.name)+' &middot; '+
-        (s.mode==='shadow'?'Shadowbox':'Spar')+'</div></div>').join('')
-    : '<span class="dim">Analyze a clip and save it to start tracking.</span>';
-  if(typeof Chart==='undefined'||!a.length)return;
-  const keys=['guard','footwork','handSpeed','headMovement','defense','workRate'];
-  const cols=['#f87171','#fbbf24','#4ade80','#60a5fa','#a78bfa','#f0abfc'];
-  if(progChart)progChart.destroy();
-  progChart=new Chart($('kProgChart'),{type:'line',
-    data:{labels:a.map(s=>s.date.slice(5,10)),
-      datasets:keys.map((k,i)=>({label:k,data:a.map(s=>(s.ratings||{})[k]|0),
-        borderColor:cols[i],backgroundColor:'transparent',tension:.35,borderWidth:2,pointRadius:2.5}))},
-    options:{responsive:true,maintainAspectRatio:false,
-      animation:{duration:800,easing:'easeOutQuart'},
-      plugins:{legend:{labels:{color:'#a4a4b2',font:{size:10},boxWidth:10}}},
-      scales:{y:{min:0,max:10,grid:{color:'rgba(255,255,255,.06)'},ticks:{color:'#5e5e6e',font:{size:10}}},
-              x:{grid:{display:false},ticks:{color:'#5e5e6e',font:{size:10}}}}}});
-}
-renderProg();
-
-})();
-
 </script>
 </body></html>
